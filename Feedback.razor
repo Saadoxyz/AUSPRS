@@ -1,0 +1,452 @@
+﻿@page "/feedback"
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager NavigationManager
+@inject FirebaseService FirebaseService
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i0.wp.com/jaamiah.com/wp-content/uploads/2019/04/Air-University.jpg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', sans-serif;
+        height: 100vh;
+        color: #333;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: rgba(13, 27, 42, 0.9);
+        color: white;
+        padding: 0 10px;
+        flex-shrink: 0;
+        overflow-y: auto;
+        backdrop-filter: blur(5px);
+    }
+
+        .sidebar h3 {
+            font-size: 18px;
+            text-align: center;
+            margin: 0;
+            padding: 15px 0;
+            background-color: rgba(13, 27, 42, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        margin: 8px 0;
+        padding: 12px 15px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        font-size: 15px;
+    }
+
+        .nav-link img {
+            width: 20px;
+            margin-right: 12px;
+            filter: brightness(0) invert(1);
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background-color: rgba(13, 60, 132, 0.7);
+            font-weight: 500;
+        }
+
+    .main-content {
+        flex-grow: 1;
+        padding: 0;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .topbar {
+        background-color: rgba(13, 60, 132, 0.9);
+        color: white;
+        padding: 18px;
+        font-size: 22px;
+        font-weight: 600;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(5px);
+    }
+
+    .content-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+        padding: 30px;
+    }
+
+    .form-container {
+        width: 900px;
+        max-width: 90%;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+        .form-container:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+        .form-header h2 {
+            color: #0d3c84;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 15px;
+        }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+        color: #444;
+    }
+
+    .form-control,
+    .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 5px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #0d3c84;
+            box-shadow: 0 0 0 3px rgba(13, 60, 132, 0.2);
+        }
+
+    .validation-message {
+        color: #d9534f;
+        font-size: 13px;
+        margin-bottom: 15px;
+        display: block;
+        min-height: 20px;
+    }
+
+    .btn-submit {
+        background-color: #0d3c84;
+        color: white;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-submit:hover {
+            background-color: #0a2d66;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 20px;
+        font-weight: 500;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .character-count {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+        margin-top: -10px;
+        margin-bottom: 15px;
+    }
+
+        .character-count.warning {
+            color: #ff9800;
+        }
+
+        .character-count.error {
+            color: #f44336;
+        }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .spinner {
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 5px solid #0d3c84;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3><img src="https://img.icons8.com/ios-filled/24/ffffff/student-male.png" /> Student Portal</h3>
+        <a class="nav-link" href="/"><img src="https://img.icons8.com/ios-filled/24/ffffff/home.png" /> Home</a>
+        <a class="nav-link" href="/attendance"><img src="https://img.icons8.com/ios-filled/24/ffffff/checklist.png" /> Attendance</a>
+        <a class="nav-link" href="/courses"><img src="https://img.icons8.com/ios-filled/24/ffffff/books.png" /> Courses</a>
+        <a class="nav-link active" href="/feedback"><img src="https://img.icons8.com/ios-filled/24/ffffff/feedback.png" /> Feedback</a>
+        <a class="nav-link" href="/inbox"><img src="https://img.icons8.com/ios-filled/24/ffffff/filled-message.png" /> Inbox</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">Student Feedback and Complaint Form</div>
+
+        <div class="content-wrapper">
+            <EditForm Model="@formModel" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+                <DataAnnotationsValidator />
+
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2>Share Your Feedback</h2>
+                        <p>We value your input to improve our services</p>
+                    </div>
+
+                    <label class="form-label">Full Name</label>
+                    <InputText class="form-control" @bind-Value="formModel.FullName" />
+                    <ValidationMessage For="@(() => formModel.FullName)" class="validation-message" />
+
+                    <label class="form-label">Email</label>
+                    <InputText type="email" class="form-control" @bind-Value="formModel.Email" />
+                    <ValidationMessage For="@(() => formModel.Email)" class="validation-message" />
+
+                    <label class="form-label">Subject</label>
+                    <InputText class="form-control" @bind-Value="formModel.Subject" />
+                    <ValidationMessage For="@(() => formModel.Subject)" class="validation-message" />
+
+                    <label class="form-label">Category</label>
+                    <InputSelect class="form-select" @bind-Value="formModel.Category">
+                        <option value="">-- Select Category --</option>
+                        <option value="General Feedback">General Feedback</option>
+                        <option value="Academic Concern">Academic Concern</option>
+                        <option value="Facility Issue">Facility Issue</option>
+                        <option value="Administrative Matter">Administrative Matter</option>
+                        <option value="Other">Other</option>
+                    </InputSelect>
+                    <ValidationMessage For="@(() => formModel.Category)" class="validation-message" />
+
+                    <label class="form-label">Message</label>
+                    <InputTextArea class="form-control" @bind-Value="formModel.Message" Rows="5"
+                                   @oninput="UpdateCharacterCount" />
+                    <div class="character-count @GetCharacterCountClass()">
+                        @characterCount / 500
+                    </div>
+                    <ValidationMessage For="@(() => formModel.Message)" class="validation-message" />
+
+                    <button type="submit" class="btn-submit" disabled="@isSubmitting">
+                        @if (isSubmitting)
+                        {
+                            <span>Submitting...</span>
+                        }
+                        else
+                        {
+                            <span>Submit Feedback</span>
+                        }
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+
+        @if (isSubmitted)
+        {
+            <div class="alert-success">
+                <p>Thank you for your feedback!</p>
+                <p>We've received your submission and will respond within 3 working days.</p>
+                <button class="btn-submit" @onclick="ReturnToHome" style="margin-top: 15px; width: auto; padding: 8px 20px;">
+                    Return to Home
+                </button>
+            </div>
+        }
+
+        @if (isSubmitting)
+        {
+            <div class="loading-overlay">
+                <div class="spinner"></div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private FeedbackFormModel formModel = new FeedbackFormModel();
+    private bool isSubmitted = false;
+    private bool isSubmitting = false;
+    private int characterCount = 0;
+
+    private void UpdateCharacterCount()
+    {
+        characterCount = formModel.Message.Length;
+    }
+
+    private string GetCharacterCountClass()
+    {
+        if (characterCount > 450) return "warning";
+        if (characterCount > 500) return "error";
+        return "";
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSubmitting = true;
+
+        try
+        {
+            var data = new Dictionary<string, object>
+        {
+            { "FullName", formModel.FullName },
+            { "Email", formModel.Email },
+            { "Subject", formModel.Subject },
+            { "Category", formModel.Category },
+            { "Message", formModel.Message }
+            
+        };
+
+            await FirebaseService.SubmitFeedbackAsync(data);
+            isSubmitted = true;
+            formModel = new FeedbackFormModel(); // Reset form
+            characterCount = 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error submitting feedback: " + ex.Message);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+
+    
+
+    private void HandleInvalidSubmit()
+    {
+        // You can add additional handling for invalid submissions here
+    }
+
+    private void ReturnToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    public class FeedbackFormModel
+    {
+        [Required(ErrorMessage = "Full name is required")]
+        [MinTwoWords(ErrorMessage = "Please enter your full name (first and last)")]
+        [StringLength(50, ErrorMessage = "Name cannot exceed 50 characters")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Subject is required")]
+        [StringLength(100, ErrorMessage = "Subject cannot exceed 100 characters")]
+        public string Subject { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please select a category")]
+        public string Category { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Message is required")]
+        [StringLength(500, ErrorMessage = "Message cannot exceed 500 characters")]
+        [MinLength(20, ErrorMessage = "Message should be at least 20 characters")]
+        public string Message { get; set; } = string.Empty;
+    }
+
+    public class MinTwoWordsAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            var name = value as string;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var wordCount = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+                if (wordCount < 2)
+                {
+                    return new ValidationResult(ErrorMessage ?? "Please enter your full name (first and last)");
+                }
+            }
+            return ValidationResult.Success!;
+        }
+    }
+}

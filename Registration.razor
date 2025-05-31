@@ -1,0 +1,325 @@
+﻿@page "/courseregistration"
+@code {
+    private string searchTerm = string.Empty;
+    private string selectedDepartment = "";
+    private string selectedSemester = "";
+    private string errorMessage = string.Empty;
+
+    private List<string> Departments = new() { "Computer Science", "Cyber Security" };
+    private List<string> Semesters = new() { "Fall", "Spring" };
+
+    private class Course
+    {
+        public string Title { get; set; } = "";
+        public string Code { get; set; } = "";
+        public string Instructor { get; set; } = "";
+        public string Schedule { get; set; } = "";
+        public int CreditHours { get; set; }
+        public string Semester { get; set; } = "";
+        public bool IsEnrolled { get; set; } = false;
+    }
+
+    private List<Course> allCourses = new()
+    {
+        // Original courses
+        new Course { Title = "Introduction to Programming", Code = "C101", Instructor = "Dr. Sara Khan", Schedule = "Mon, Wed 9:00-10:30 AM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Linear Algebra", Code = "MAT101", Instructor = "Dr. Ali Hassan", Schedule = "Tue, Thu 11:40-1:00 PM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Pak Studies", Code = "LIB103", Instructor = "Mr. Abdullah Khan", Schedule = "Tue 12:20-2:00 PM", CreditHours = 2, Semester = "Fall" },
+        new Course { Title = "Data Structures", Code = "CC253", Instructor = "Mrs. Sara Khan", Schedule = "Tue/Thu 2:40-4:00 PM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Operating Systems", Code = "CC255", Instructor = "Mr. Adnan Shah", Schedule = "Wed/Fri 9:00-10:30 AM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Multi Variable Calculus", Code = "CC275", Instructor = "Mrs. Nadia Akram", Schedule = "Mon/Thu 12:00-2:00 PM", CreditHours = 3, Semester = "Spring" },
+
+        // Newly added courses (20 more)
+        new Course { Title = "Database Systems", Code = "CS301", Instructor = "Dr. Farhan Ahmed", Schedule = "Mon/Wed 10:45-12:15 PM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Computer Networks", Code = "CS302", Instructor = "Dr. Bilal Raza", Schedule = "Tue/Thu 9:00-10:30 AM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Artificial Intelligence", Code = "CS401", Instructor = "Dr. Saima Ali", Schedule = "Mon/Wed 2:00-3:30 PM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Software Engineering", Code = "CS402", Instructor = "Dr. Usman Malik", Schedule = "Tue/Thu 3:45-5:15 PM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Computer Architecture", Code = "CS303", Instructor = "Dr. Hamid Khan", Schedule = "Fri 9:00-12:00 PM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Discrete Mathematics", Code = "MATH201", Instructor = "Dr. Naveed Iqbal", Schedule = "Mon/Wed 8:00-9:30 AM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Probability & Statistics", Code = "MATH202", Instructor = "Dr. Asma Khan", Schedule = "Tue/Thu 10:45-12:15 PM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Cyber Security Fundamentals", Code = "CYB201", Instructor = "Dr. Zainab Ahmed", Schedule = "Mon/Wed 1:00-2:30 PM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Digital Logic Design", Code = "EE201", Instructor = "Dr. Omar Farooq", Schedule = "Tue/Thu 8:00-9:30 AM", CreditHours = 3, Semester = "Fall" },
+        new Course { Title = "Technical Writing", Code = "ENG201", Instructor = "Dr. Fatima Khan", Schedule = "Fri 1:00-4:00 PM", CreditHours = 2, Semester = "Fall" },
+
+        new Course { Title = "Algorithms Analysis", Code = "CS351", Instructor = "Dr. Ahmed Raza", Schedule = "Mon/Wed 9:00-10:30 AM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Machine Learning", Code = "CS451", Instructor = "Dr. Sanaullah Khan", Schedule = "Tue/Thu 2:00-3:30 PM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Cloud Computing", Code = "CS452", Instructor = "Dr. Imran Ali", Schedule = "Mon/Wed 3:45-5:15 PM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Computer Graphics", Code = "CS353", Instructor = "Dr. Ayesha Malik", Schedule = "Fri 9:00-12:00 PM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Numerical Computing", Code = "MATH251", Instructor = "Dr. Kamran Shah", Schedule = "Tue/Thu 8:00-9:30 AM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Cryptography", Code = "CYB301", Instructor = "Dr. Zubair Ahmed", Schedule = "Mon/Wed 10:45-12:15 PM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Network Security", Code = "CYB302", Instructor = "Dr. Hina Raza", Schedule = "Tue/Thu 9:00-10:30 AM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Embedded Systems", Code = "EE251", Instructor = "Dr. Faraz Khan", Schedule = "Mon/Wed 1:00-2:30 PM", CreditHours = 3, Semester = "Spring" },
+        new Course { Title = "Research Methodology", Code = "RES301", Instructor = "Dr. Nida Ali", Schedule = "Fri 1:00-4:00 PM", CreditHours = 2, Semester = "Spring" },
+        new Course { Title = "Human Computer Interaction", Code = "CS454", Instructor = "Dr. Samina Khan", Schedule = "Tue/Thu 10:45-12:15 PM", CreditHours = 3, Semester = "Spring" }
+    };
+
+    private IEnumerable<Course> FilteredCourses => allCourses
+        .Where(c =>
+            (!string.IsNullOrWhiteSpace(selectedSemester) &&
+             (string.IsNullOrWhiteSpace(searchTerm) ||
+             (c.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+              c.Code.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+              c.Instructor.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))) &&
+             c.Semester == selectedSemester)
+        );
+
+    private void ToggleEnroll(Course course)
+    {
+        if (course.Semester != selectedSemester)
+        {
+            JS.InvokeVoidAsync("alert", $"You can only enroll in courses for the selected semester: {selectedSemester}.");
+            return;
+        }
+
+        foreach (var c in allCourses)
+        {
+            if (c.Semester != selectedSemester)
+            {
+                c.IsEnrolled = false;
+            }
+        }
+
+        course.IsEnrolled = !course.IsEnrolled;
+    }
+
+    private void SubmitRegistration()
+    {
+        errorMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(selectedDepartment) || string.IsNullOrWhiteSpace(selectedSemester))
+        {
+            errorMessage = "Please select both Department and Semester before proceeding.";
+            return;
+        }
+
+        var enrolledCourses = allCourses.Where(c => c.IsEnrolled).ToList();
+        if (enrolledCourses.Count == 0)
+        {
+            JS.InvokeVoidAsync("alert", "No courses enrolled.");
+            return;
+        }
+
+        string message = "You have enrolled in:\n" + string.Join("\n", enrolledCourses.Select(c => $"{c.Title} ({c.Code})"));
+        JS.InvokeVoidAsync("alert", message);
+    }
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+}
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0c1a2b;
+        color: white;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #081421;
+        padding: 20px;
+    }
+
+        .navbar .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .navbar .logo-area img {
+                height: 40px;
+            }
+
+            .navbar .logo-area h2 {
+                margin: 0;
+                font-size: 18px;
+            }
+
+            .navbar .logo-area span {
+                font-size: 14px;
+                display: block;
+            }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+        }
+
+            .navbar ul li a {
+                color: white;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+        .navbar button {
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+    .header {
+        text-align: center;
+        margin: 30px 0 10px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .filters {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+        .filters input,
+        .filters select {
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+
+    .error {
+        text-align: center;
+        color: red;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .course-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        padding: 0 40px;
+    }
+
+    .course-card {
+        background-color: #ffffff;
+        color: black;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s;
+    }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-card h4 {
+            margin: 0 0 5px;
+        }
+
+        .course-card p {
+            margin: 3px 0;
+            font-size: 13px;
+        }
+
+        .course-card button {
+            background-color: #007bff;
+            border: none;
+            padding: 8px;
+            color: white;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+            .course-card button.enrolled {
+                background-color: #28a745;
+            }
+
+    .submit-btn {
+        text-align: center;
+        margin: 30px;
+    }
+
+        .submit-btn button {
+            background-color: white;
+            color: #081421;
+            font-weight: bold;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+</style>
+
+<!-- ✅ UPDATED NAVBAR -->
+<div class="navbar">
+    <div class="logo-area">
+        <img src="data:image/png;base64,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" alt="AU Logo" />
+        <div>
+            <h2>Air University Student Portal</h2>
+            <span>Registration System</span>
+        </div>
+    </div>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Programs</a></li>
+        <li><a href="#">Administration</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">FAQs</a></li>
+    </ul>
+    <button>Apply Now</button>
+</div>
+
+<div class="header">Course Registration</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="error">@errorMessage</div>
+}
+
+<div class="filters">
+    <input type="text" placeholder="Search Courses..." @bind="searchTerm" />
+    <select @bind="selectedDepartment">
+        <option value="">Department</option>
+        @foreach (var dept in Departments)
+        {
+            <option value="@dept">@dept</option>
+        }
+    </select>
+    <select @bind="selectedSemester">
+        <option value="">Semester</option>
+        @foreach (var sem in Semesters)
+        {
+            <option value="@sem">@sem</option>
+        }
+    </select>
+</div>
+
+<div class="course-grid">
+    @foreach (var course in FilteredCourses)
+    {
+        <div class="course-card">
+            <h4>@course.Title</h4>
+            <p>@course.Code</p>
+            <p>@course.Instructor</p>
+            <p>@course.Schedule</p>
+            <p>Total Credit Hours: @course.CreditHours</p>
+            <button class="@(course.IsEnrolled ? "enrolled" : "")" @onclick="() => ToggleEnroll(course)">
+                @(course.IsEnrolled ? "Unenroll" : "Enroll")
+            </button>
+        </div>
+    }
+</div>
+
+<div class="submit-btn">
+    <button @onclick="SubmitRegistration">Submit Registration</button>
+</div>
+

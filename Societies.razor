@@ -1,0 +1,556 @@
+﻿@page "/clubs"
+@inject NavigationManager Navigation
+
+<style>
+    :root {
+        --primary-color: #002744;
+        --secondary-color: #f5f5f5;
+        --accent-color: #ff6d00;
+        --text-color: #333;
+        --light-text: #fff;
+        --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        --hover-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .header {
+        background-color: var(--primary-color);
+        color: var(--light-text);
+        padding: 15px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .logo-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+        .logo-title img {
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-title:hover img {
+            transform: scale(1.05);
+        }
+
+    .logo-text {
+        font-size: 16px;
+        line-height: 1.2;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+
+        .nav-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 5px 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+            .nav-links a:hover {
+                color: var(--accent-color);
+            }
+
+            .nav-links a::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background-color: var(--accent-color);
+                transition: width 0.3s ease;
+            }
+
+            .nav-links a:hover::after {
+                width: 100%;
+            }
+
+        .nav-links button {
+            background-color: var(--light-text);
+            color: var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--card-shadow);
+        }
+
+            .nav-links button:hover {
+                background-color: var(--accent-color);
+                color: var(--light-text);
+                transform: translateY(-2px);
+                box-shadow: var(--hover-shadow);
+            }
+
+    .hero-section {
+        background: linear-gradient(rgba(0, 39, 68, 0.8), rgba(0, 39, 68, 0.8)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        color: var(--light-text);
+        padding: 80px 20px;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 30px;
+    }
+
+    .search-container {
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 20px;
+        border-radius: 30px;
+        border: none;
+        font-size: 16px;
+        box-shadow: var(--card-shadow);
+    }
+
+    .search-button {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        background-color: var(--accent-color);
+        color: var(--light-text);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .search-button:hover {
+            background-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+    .section-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 40px 0 30px;
+        color: var(--primary-color);
+        position: relative;
+    }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 15px auto 0;
+        }
+
+    .clubs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        padding: 20px 5%;
+        margin-bottom: 50px;
+    }
+
+    .club-card {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--light-text);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        height: 350px;
+    }
+
+        .club-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .club-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .club-card .details {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+    .club-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .club-description {
+        font-size: 14px;
+        color: var(--text-color);
+        line-height: 1.4;
+        margin-bottom: 15px;
+    }
+
+    .club-card button {
+        align-self: flex-start;
+        background-color: var(--primary-color);
+        color: var(--light-text);
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .club-card button:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+    .categories {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 0 5% 30px;
+    }
+
+    .category-btn {
+        padding: 8px 20px;
+        background-color: var(--secondary-color);
+        border: none;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .category-btn:hover, .category-btn.active {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+        }
+
+    .footer {
+        background-color: var(--primary-color);
+        color: var(--light-text);
+        padding: 40px 5%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+    }
+
+    .footer-column h3 {
+        font-size: 18px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+    .footer-column ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-column li {
+        margin-bottom: 10px;
+    }
+
+    .footer-column a {
+        color: var(--light-text);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+        .footer-column a:hover {
+            color: var(--accent-color);
+        }
+
+    .social-icons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .social-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+        .social-icon:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+    .copyright {
+        text-align: center;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+    }
+
+    @@media (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            padding: 15px 20px;
+            gap: 15px;
+        }
+
+        .nav-links {
+            width: 100%;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .clubs-grid {
+            grid-template-columns: 1fr;
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="header">
+    <div class="logo-title">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTru8wRooOau9ZNDdiYjEANT29_ijYuMFB0YQ&s" alt="Logo" />
+        <div class="logo-text">
+            <div>Air University Student Portal</div>
+            <div>Registration System</div>
+        </div>
+    </div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="#">About</a>
+        <a href="#">Programs</a>
+        <a href="#">Administration</a>
+        <a href="#">Contact</a>
+        <a href="#">FAQs</a>
+        <button>Apply Now</button>
+    </div>
+</div>
+
+<div class="hero-section">
+    <h1 class="hero-title">Clubs & Societies</h1>
+    <p class="hero-subtitle">Join a vibrant community of students who share your passions and interests. Explore our diverse range of clubs and find your perfect fit.</p>
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search for clubs..." />
+        <button class="search-button">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</div>
+
+<div class="categories">
+    <button class="category-btn active">All Clubs</button>
+    <button class="category-btn">Arts & Culture</button>
+    <button class="category-btn">Academic</button>
+    <button class="category-btn">Sports</button>
+    <button class="category-btn">Community Service</button>
+    <button class="category-btn">Special Interest</button>
+</div>
+
+<h2 class="section-title">Featured Clubs</h2>
+
+<div class="clubs-grid">
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Music Club" />
+        <div class="details">
+            <h3 class="club-name">Music Club</h3>
+            <p class="club-description">Where every note counts and every musician belongs. Join us for jam sessions, performances, and music workshops.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1536922246289-88c42f957773?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Art Club" />
+        <div class="details">
+            <h3 class="club-name">Art Club</h3>
+            <p class="club-description">Where creativity meets community and every idea turns into art. Exhibitions, workshops, and collaborative projects.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cultural Society" />
+        <div class="details">
+            <h3 class="club-name">Cultural Society</h3>
+            <p class="club-description">Celebrate diversity through cultural events, food festivals, and traditional performances from around the world.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Environmental Club" />
+        <div class="details">
+            <h3 class="club-name">Environmental Club</h3>
+            <p class="club-description">Protecting our planet through action and awareness. Tree planting, cleanups, and sustainability initiatives.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Photography Club" />
+        <div class="details">
+            <h3 class="club-name">Photography Club</h3>
+            <p class="club-description">Capturing moments through lens. Photo walks, competitions, and workshops on various photography techniques.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Drama Society" />
+        <div class="details">
+            <h3 class="club-name">Drama Society</h3>
+            <p class="club-description">Bringing stories to life on stage. Acting workshops, theater productions, and improv nights throughout the year.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Gaming Club" />
+        <div class="details">
+            <h3 class="club-name">Gaming Club</h3>
+            <p class="club-description">From consoles to PCs, we play it all. Tournaments, LAN parties, and game development workshops.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://en.shafaqna.com/wp-content/uploads/2016/06/Blog-Post-Barometer-of-Islamic-Society-slider-1.jpg" alt="Islamic Society" />
+        <div class="details">
+            <h3 class="club-name">Islamic Society</h3>
+            <p class="club-description">A space to grow in faith and community. Weekly discussions, Quran study circles, and interfaith dialogues.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+
+    <div class="club-card">
+        <img src="https://images.unsplash.com/photo-1493612276216-ee3925520721?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Mental Health Awareness" />
+        <div class="details">
+            <h3 class="club-name">Mental Health Awareness</h3>
+            <p class="club-description">Promoting self-care, empathy and strength. Workshops, support groups, and awareness campaigns.</p>
+            <button @onclick="NavigateToCourseCreate">Join Now</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="footer-column">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About AU</a></li>
+            <li><a href="#">Academic Calendar</a></li>
+            <li><a href="#">Student Portal</a></li>
+            <li><a href="#">Library</a></li>
+        </ul>
+    </div>
+    <div class="footer-column">
+        <h3>Student Life</h3>
+        <ul>
+            <li><a href="#">Clubs & Societies</a></li>
+            <li><a href="#">Sports Facilities</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Student Housing</a></li>
+            <li><a href="#">Campus Map</a></li>
+        </ul>
+    </div>
+    <div class="footer-column">
+        <h3>Resources</h3>
+        <ul>
+            <li><a href="#">Career Services</a></li>
+            <li><a href="#">Counseling</a></li>
+            <li><a href="#">Financial Aid</a></li>
+            <li><a href="#">IT Support</a></li>
+            <li><a href="#">Alumni Network</a></li>
+        </ul>
+    </div>
+    <div class="footer-column">
+        <h3>Contact Us</h3>
+        <ul>
+            <li>Main Campus, Islamabad</li>
+            <li>Phone: +92 51 111 247 864</li>
+            <li>Email: info@au.edu.pk</li>
+            <li>Admissions: admissions@au.edu.pk</li>
+        </ul>
+        <div class="social-icons">
+            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="copyright">
+    &copy; 2023 Air University. All Rights Reserved.
+</div>
+
+@code {
+    private void NavigateToCourseCreate()
+    {
+        Navigation.NavigateTo("/courses/create");
+    }
+}

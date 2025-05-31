@@ -1,0 +1,115 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
+@inject FirebaseAuthService AuthService
+
+<head>
+    <link href="css/Login.css" rel="stylesheet" />
+</head>
+<div class="container">
+    <div class="left-panel">
+        <div class="logo">
+            <img src="/logo.png" alt="Logo" />
+        </div>
+        <h1 class="title">LOGIN TO YOUR ACCOUNT</h1>
+        <p class="subtitle">Login using social networks</p>
+        <div class="social-login">
+            <button class="social-btn linkedin"><i class="fab fa-linkedin"></i></button>
+            <button class="social-btn facebook"><i class="fab fa-facebook"></i></button>
+            
+        </div>
+
+        <div class="or-divider">OR</div>
+
+        <EditForm Model="@loginModel" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <div class="input-container">
+                    <i class="fas fa-user"></i>
+                    <InputText @bind-Value="loginModel.Email" class="form-control" placeholder="Email" />
+                </div>
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <div class="input-container">
+                    <i class="fas fa-lock"></i>
+                    <InputText @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="Password" />
+                </div>
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <button type="submit" class="btn-login-s">Login</button>
+            </div>
+        </EditForm>
+    </div>
+
+    <div class="right-panel">
+        <div class="new-here">
+            <h2 class="animated-title">NEW HERE</h2>
+            <p>Create your account to join our academic community and unlock a world of learning, growth, and student services.</p>
+            <button class="btn-signup" @onclick="NavigateToSignup">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+        </div>
+    </div>
+</div>
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private string errorMessage = string.Empty;
+
+    private class LoginModel
+    {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        Console.WriteLine("Login button clicked");
+        errorMessage = "";
+
+        var result = await AuthService.LoginWithEmailPassword(loginModel.Email, loginModel.Password);
+        await JSRuntime.InvokeVoidAsync("syncFirebaseLogin", loginModel.Email, loginModel.Password);
+        if (result.Success)
+        {
+            Console.WriteLine("Login successful");
+            NavigationManager.NavigateTo("/Program");
+        }
+        else
+        {
+            Console.WriteLine("Login failed: " + result.Error);
+            errorMessage = "Firebase Error: " + result.Error;
+            loginModel.Password = string.Empty;
+        }
+    }
+
+
+
+    private void NavigateToSignup()
+    {
+        Console.WriteLine("Sign Up button clicked");
+        NavigationManager.NavigateTo("/signup");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeAnimations");
+        }
+    }
+}

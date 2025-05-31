@@ -1,0 +1,181 @@
+﻿@page "/Ps"
+@using Microsoft.AspNetCore.Components.Routing
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #001f3f; /* Navy Blue */
+        color: white;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #374151;
+    }
+
+    .navbar-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.25;
+    }
+
+    .nav-links a {
+        margin: 0 0.75rem;
+        font-size: 0.875rem;
+        color: white;
+        text-decoration: none;
+    }
+
+    .apply-btn {
+        background-color: #007bff; /* Blue */
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .note-box {
+        background-color: #336699; /* Bluish */
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .header {
+        background: url('https://static.vecteezy.com/system/resources/previews/017/657/000/large_2x/wide-variety-of-books-for-sale-in-library-photo.jpg') no-repeat center top;
+        background-size: cover;
+        padding: 40px 0;
+        text-align: center;
+    }
+
+        .header h1 {
+            color: #f5f5f5; /* Whitish */
+            font-size: 42px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000;
+            margin: 0;
+        }
+
+    .content {
+        background-color: transparent;
+        padding: 20px;
+        margin: 0 auto;
+        max-width: 1200px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        color: black;
+        background-color: #f0f0f0; /* whitish-gray */
+    }
+
+    th, td {
+        border: 1px solid #aaa;
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #003366;
+        color: white;
+    }
+
+    .section-title {
+        background-color: #d0d0d0;
+        font-weight: bold;
+        text-align: left;
+        padding-left: 10px;
+        color: #001f3f; /* Navy blue headings */
+    }
+
+    .green-check {
+        color: green;
+        font-weight: bold;
+    }
+
+    .note {
+        margin-top: 30px;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        color: #111;
+    }
+</style>
+
+<div class="navbar">
+    <div class="navbar-title">Air University Student<br />Portal Registration System</div>
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Programs</a>
+        <a href="#">Administration</a>
+        <a href="#">Contact</a>
+        <a href="#">FAQs</a>
+    </div>
+    <button class="apply-btn">Apply Now</button>
+</div>
+
+<div class="header">
+    <h1>PROGRAMS OFFERED</h1>
+</div>
+
+<div class="content">
+    <div class="note-box">
+        This table includes both Graduate and Postgraduate programs.
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Programs</th>
+                <th>Chiniot-Faisalabad</th>
+                <th>Islamabad</th>
+                <th>Karachi</th>
+                <th>Lahore</th>
+                <th>Multan</th>
+                <th>Peshawar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td class="section-title" colspan="7">Graduate Programs</td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Business%20Administration">Master of Business Administration</NavLink></td><td></td><td class="green-check">✔</td><td></td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Applied%20Linguistics)">Master of Science (Applied Linguistics)</NavLink></td><td class="green-check">✔</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Artificial%20Intelligence)">Master of Science (Artificial Intelligence)</NavLink></td><td></td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Business%20Analytics)">Master of Science (Business Analytics)</NavLink></td><td></td><td class="green-check">✔</td><td></td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Civil%20Engineering)">Master of Science (Civil Engineering)</NavLink></td><td></td><td class="green-check">✔</td><td class="green-check">✔</td><td></td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Computer%20Science)">Master of Science (Computer Science)</NavLink></td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Cyber%20Security)">Master of Science (Cyber Security)</NavLink></td><td></td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Data%20Science)">Master of Science (Data Science)</NavLink></td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td></td><td class="green-check">✔</td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Electrical%20Engineering)">Master of Science (Electrical Engineering)</NavLink></td><td></td><td class="green-check">✔</td><td></td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Mathematics)">Master of Science (Mathematics)</NavLink></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Master%20of%20Science%20(Software%20Engineering)">Master of Science (Software Engineering)</NavLink></td><td class="green-check">✔</td><td class="green-check">✔</td><td></td><td class="green-check">✔</td><td></td><td class="green-check">✔</td></tr>
+
+            <tr><td class="section-title" colspan="7">Postgraduate Programs</td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Doctor%20of%20Philosophy%20(Civil%20Engineering)">Doctor of Philosophy (Civil Engineering)</NavLink></td><td></td><td></td><td class="green-check">✔</td><td></td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Doctor%20of%20Philosophy%20(Computer%20Science)">Doctor of Philosophy (Computer Science)</NavLink></td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Doctor%20of%20Philosophy%20(Electrical%20Engineering)">Doctor of Philosophy (Electrical Engineering)</NavLink></td><td></td><td></td><td class="green-check">✔</td><td></td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Doctor%20of%20Philosophy%20(Management%20Sciences)">Doctor of Philosophy (Management Sciences)</NavLink></td><td></td><td></td><td class="green-check">✔</td><td></td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Doctor%20of%20Philosophy%20(Mathematics)">Doctor of Philosophy (Mathematics)</NavLink></td><td></td><td></td><td></td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Doctor%20of%20Philosophy%20(Software%20Engineering)">Doctor of Philosophy (Software Engineering)</NavLink></td><td></td><td class="green-check">✔</td><td></td><td class="green-check">✔</td><td></td><td></td></tr>
+            <tr><td><NavLink class="program-link" href="/Applicationform/Doctor%20of%20Philosophy%20English%20(Linguistics)">Doctor of Philosophy English (Linguistics)</NavLink></td><td></td><td></td><td class="green-check">✔</td><td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+
+    <div class="note">
+        <p><strong>Admission Test:</strong><br />Applicant must select only one of the three admission test options:<br />GRE General<br />NTS GAT-B (General tests from specific universities will not be acceptable)</p>
+        <p><strong>Eligibility:</strong><br />Degree in a relevant subject or a related discipline earned from a recognized university after 16 years of education.<br />Minimum 55% marks or CGPA of at least 2.00 on a scale of 4.00</p>
+        <p><strong>Selection Criteria:</strong><br />Weightage of Admission Test marks – 50%<br />Weightage of past academic record (4 year Bachelor / 2 year Bachelor / 2 year Master) – 50%</p>
+    </div>
+</div>

@@ -1,0 +1,283 @@
+﻿/* Full page background with subtle gradient */
+html, body {
+    background: linear-gradient(135deg, #021526 0%, #0a2b45 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #f0f4f8;
+    min-height: 100vh;
+}
+
+/* Main container with full-width glass effect */
+.course-details {
+    background: rgba(5, 30, 60, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(28, 107, 199, 0.2);
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.6s ease both;
+    position: relative;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    width: 100%;
+    margin: 0 auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+    /* Decorative background element */
+    .course-details::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(25, 118, 210, 0.1) 0%, transparent 70%);
+        z-index: -1;
+    }
+
+/* Section heading */
+.section-title {
+    text-align: center;
+    color: #90caf9;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #1976d2, transparent);
+        border-radius: 3px;
+    }
+
+/* Create button */
+.create-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+    }
+
+/* Table styles - CRITICAL FIXES FOR HEADER GLASS EFFECT */
+.styled-grid {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: transparent;
+    color: #e0e0e0;
+    margin-top: 1.5rem;
+}
+
+    /* Glass effect header - FULL WIDTH SOLUTION */
+    .styled-grid thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: block;
+        width: 100%;
+    }
+
+        .styled-grid thead tr {
+            display: flex;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(10, 43, 69, 0.9) 0%, rgba(17, 35, 58, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+    .styled-grid th {
+        flex: 1;
+        min-width: 150px; /* Adjust based on your content */
+        padding: 1rem;
+        text-align: left;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #1976d2;
+        color: #bbdefb;
+    }
+
+    /* Table body matching header structure */
+    .styled-grid tbody {
+        display: block;
+        width: 100%;
+    }
+
+        .styled-grid tbody tr {
+            display: flex;
+            width: 100%;
+        }
+
+    .styled-grid td {
+        flex: 1;
+        min-width: 150px; /* Must match header min-width */
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid rgba(25, 118, 210, 0.2);
+        transition: background-color 0.2s ease;
+    }
+
+    /* Row styling */
+    .styled-grid tbody tr {
+        background-color: rgba(8, 38, 74, 0.5);
+    }
+
+        .styled-grid tbody tr:nth-child(even) {
+            background-color: rgba(12, 45, 82, 0.5);
+        }
+
+        .styled-grid tbody tr:hover {
+            background-color: rgba(25, 118, 210, 0.15);
+        }
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.btn-edit {
+    background-color: rgba(25, 118, 210, 0.1);
+    color: #64b5f6;
+    border: 1px solid rgba(25, 118, 210, 0.3);
+}
+
+    .btn-edit:hover {
+        background-color: rgba(25, 118, 210, 0.3);
+        color: #bbdefb;
+    }
+
+.btn-details {
+    background-color: rgba(56, 142, 60, 0.1);
+    color: #81c784;
+    border: 1px solid rgba(56, 142, 60, 0.3);
+}
+
+    .btn-details:hover {
+        background-color: rgba(56, 142, 60, 0.3);
+        color: #c8e6c9;
+    }
+
+.btn-delete {
+    background-color: rgba(211, 47, 47, 0.1);
+    color: #e57373;
+    border: 1px solid rgba(211, 47, 47, 0.3);
+}
+
+    .btn-delete:hover {
+        background-color: rgba(211, 47, 47, 0.3);
+        color: #ffcdd2;
+    }
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .course-details {
+        padding: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .course-details {
+        padding: 1rem;
+    }
+
+    .styled-grid th,
+    .styled-grid td {
+        padding: 0.6rem;
+        min-width: 120px; /* Smaller min-width on mobile */
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+}
+
+/* Scroll indicator */
+.course-details::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(5, 30, 60, 0.7));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.course-details.scrolled::after {
+    opacity: 1;
+}
+.course-details::-webkit-scrollbar {
+    display: none;
+}

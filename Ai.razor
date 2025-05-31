@@ -1,0 +1,113 @@
+﻿@page "/chat"
+@inject GeminiChatService ChatService
+<head>
+    <link href="css/Ai.css" rel="stylesheet" />
+</head>
+<div class="navbar">
+    <div class="navbar-left">
+        <img src="logo.png" alt="Logo" class="logo" />
+        <div class="title-group">
+            <span class="title-main">Air University Student Portal</span>
+            <span class="title-sub">Registration System</span>
+        </div>
+    </div>
+    <div class="navbar-center">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Programs</a>
+        <a href="#">Administration</a>
+        <a href="#">Contact</a>
+        <a href="#">FAQs</a>
+    </div>
+    <div class="navbar-right">
+        <button class="apply-btn">Apply Now</button>
+    </div>
+</div>
+
+<div class="chat-container">
+    <div class="chat-box" @ref="chatBoxRef">
+        @foreach (var msg in messages)
+        {
+            <div class="@(msg.IsUser ? "user-message message" : "ai-message message")">
+                <div class="bubble animate-slide-in">
+                    @msg.Text
+                </div>
+            </div>
+        }
+
+        @if (isTyping)
+        {
+            <div class="ai-message message">
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <div class="chat-input">
+        <input @bind="userInput" @bind:event="oninput" @onkeydown="HandleKeyPress" placeholder="Type a message..." />
+        <button @onclick="SendMessage">Send</button>
+    </div>
+</div>
+
+@code {
+    private bool isTyping = false;
+
+    private string userInput;
+    private ElementReference chatBoxRef;
+
+    private List<ChatMessage> messages = new();
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(userInput)) return;
+
+        messages.Add(new ChatMessage { Text = userInput, IsUser = true });
+        var currentInput = userInput;
+        userInput = string.Empty;
+
+        isTyping = true; // Show typing indicator
+        StateHasChanged(); // Refresh UI
+
+        await ScrollToBottomAsync();
+
+        var reply = await ChatService.SendMessageAsync(currentInput);
+
+        messages.Add(new ChatMessage { Text = reply, IsUser = false });
+
+        isTyping = false; // Hide typing indicator
+        StateHasChanged(); // Refresh UI again
+
+        await ScrollToBottomAsync();
+    }
+
+
+    private async Task ScrollToBottomAsync()
+    {
+        await Task.Delay(50);
+        await JS.InvokeVoidAsync("scrollToBottom", chatBoxRef);
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+    private ElementReference chatEnd;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("scrollToBottom");
+    }
+    [Inject]
+    private IJSRuntime JS { get; set; }
+
+    private class ChatMessage
+    {
+        public string Text { get; set; }
+        public bool IsUser { get; set; }
+    }
+}

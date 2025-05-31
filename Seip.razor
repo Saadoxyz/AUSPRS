@@ -1,0 +1,240 @@
+﻿@page "/Seip"
+<link href="/css/Seip.css" rel="stylesheet" />
+
+<nav class="navbar">
+    <div class="navbar-brand">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTru8wRooOau9ZNDdiYjEANT29_ijYuMFB0YQ&s"
+             alt="Air University Logo" class="logo" />
+        <div class="navbar-title">
+            <span class="title-main">Air University</span>
+            <span class="title-sub">Student Portal Registration System</span>
+        </div>
+    </div>
+    <div class="nav-links">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">About</a>
+        <a href="#" class="nav-link">Programs</a>
+        <a href="#" class="nav-link">Administration</a>
+        <a href="#" class="nav-link">Contact</a>
+        <a href="#" class="nav-link">FAQs</a>
+    </div>
+    <button class="apply-btn" @onclick="OpenPdf">Download Brochure</button>
+</nav>
+
+<header class="hero-banner">
+    <div class="hero-overlay">
+        <h1>Student Exchange & International Programs</h1>
+        <p class="hero-subtitle">Expand your horizons through global education opportunities</p>
+    </div>
+</header>
+
+<main class="content-container">
+    <div class="notification-banner">
+        <i class="fas fa-globe-europe notification-icon"></i>
+        <div class="notification-text">
+            Explore exciting opportunities to study abroad through our student exchange and international collaboration programs!
+        </div>
+    </div>
+
+    <section class="program-section">
+        <div class="section-header">
+            <i class="fas fa-info-circle section-icon"></i>
+            <h2>About the Program</h2>
+        </div>
+        <div class="section-content">
+            <p>
+                The Student Exchange and International Programs at Air University aim to enhance global exposure and academic excellence.
+                These programs offer students a chance to study abroad, experience diverse cultures, and develop a global academic perspective.
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Partner Institutions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">Students Exchanged</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">15</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="program-section">
+        <div class="section-header">
+            <i class="fas fa-university section-icon"></i>
+            <h2>Partner Universities</h2>
+        </div>
+        <div class="section-content">
+            <div class="partner-grid">
+                <div class="partner-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Germany.svg/1200px-Flag_of_Germany.svg.png"
+                         alt="Germany Flag" class="partner-flag" />
+                    <h3>Germany</h3>
+                    <ul>
+                        <li>DAAD Scholarships</li>
+                        <li>TU Berlin</li>
+                        <li>Technical University of Munich</li>
+                    </ul>
+                </div>
+                <div class="partner-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/1200px-Flag_of_Turkey.svg.png"
+                         alt="Turkey Flag" class="partner-flag" />
+                    <h3>Turkey</h3>
+                    <ul>
+                        <li>Istanbul Technical University</li>
+                        <li>Middle East Technical University</li>
+                        <li>Ankara University</li>
+                    </ul>
+                </div>
+                <div class="partner-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/1200px-Flag_of_Malaysia.svg.png"
+                         alt="Malaysia Flag" class="partner-flag" />
+                    <h3>Malaysia</h3>
+                    <ul>
+                        <li>Universiti Teknologi Malaysia (UTM)</li>
+                        <li>Universiti Teknologi PETRONAS (UTP)</li>
+                        <li>University of Malaya</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="two-column-layout">
+        <section class="program-section">
+            <div class="section-header">
+                <i class="fas fa-clipboard-check section-icon"></i>
+                <h2>Eligibility Criteria</h2>
+            </div>
+            <div class="section-content">
+                <ul class="checklist">
+                    <li><i class="fas fa-check-circle"></i> Enrolled in undergraduate/postgraduate program at AU</li>
+                    <li><i class="fas fa-check-circle"></i> Minimum CGPA of 2.8 (undergrad) / 3.0 (postgrad)</li>
+                    <li><i class="fas fa-check-circle"></i> Proficient in English (IELTS/TOEFL may be required)</li>
+                    <li><i class="fas fa-check-circle"></i> No disciplinary actions on record</li>
+                    <li><i class="fas fa-check-circle"></i> Valid passport for duration of exchange</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="program-section">
+            <div class="section-header">
+                <i class="fas fa-award section-icon"></i>
+                <h2>Program Benefits</h2>
+            </div>
+            <div class="section-content">
+                <ul class="benefits-list">
+                    <li>
+                        <i class="fas fa-exchange-alt benefit-icon"></i>
+                        <div>
+                            <h3>Semester Exchange</h3>
+                            <p>Study abroad with full credit transfer</p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-globe benefit-icon"></i>
+                        <div>
+                            <h3>Global Exposure</h3>
+                            <p>Experience diverse education systems</p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-network-wired benefit-icon"></i>
+                        <div>
+                            <h3>Networking</h3>
+                            <p>Build international connections</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <section class="program-section">
+        <div class="section-header">
+            <i class="fas fa-file-alt section-icon"></i>
+            <h2>Application Process</h2>
+        </div>
+        <div class="section-content">
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Check Eligibility</h3>
+                        <p>Review requirements and deadlines</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Prepare Documents</h3>
+                        <p>Transcript, SOP, recommendations</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Submit Application</h3>
+                        <p>Through AU International Office</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Interview</h3>
+                        <p>Selection committee review</p>
+                    </div>
+                </div>
+            </div>
+            <div class="document-checklist">
+                <h3>Required Documents:</h3>
+                <ul>
+                    <li>Completed application form</li>
+                    <li>Latest academic transcript</li>
+                    <li>Statement of Purpose (500 words)</li>
+                    <li>Two recommendation letters</li>
+                    <li>Language proficiency proof</li>
+                    <li>Passport copy</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="cta-box">
+        <div class="cta-content">
+            <h3>Ready to Apply?</h3>
+            <p>Applications open every semester. Visit the International Office for guidance.</p>
+            <div class="cta-contacts">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:intl.office@au.edu.pk">intl.office@au.edu.pk</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+925111111111">+92 51 11111111</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>International Office, Admin Block</span>
+                </div>
+            </div>
+        </div>
+        <button class="cta-button" @onclick="OpenPdf">
+            <i class="fas fa-download"></i> Download Full Guidelines
+        </button>
+    </div>
+</main>
+
+@code {
+    private void OpenPdf()
+    {
+        var pdfUrl = "CN.pdf"; // This works only if path is correct
+        JS.InvokeVoidAsync("open", pdfUrl, "_blank");
+    }
+
+    [Inject] private IJSRuntime JS { get; set; }
+}

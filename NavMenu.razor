@@ -1,0 +1,116 @@
+﻿@inject NavigationManager NavigationManager
+
+<head>
+    <link href="css/Dashboard.css" rel="stylesheet" />
+    <link href="css/skill.css" rel="stylesheet" />
+</head>
+
+<div class="nav-profile">
+    <img src="images/profile-avatar.png" alt="Profile" class="profile-image" />
+    <div class="profile-name @(IsExpanded ? "" : "d-none")">Saad Khan</div>
+</div>
+
+<nav class="flex-column">
+    <div class="nav-item @(IsActiveRoute("time-management"))" @onclick="@(() => NavigateTo("time-management"))">
+        <NavLink class="nav-link" href="time-management" Match="NavLinkMatch.All">
+            <span class="oi oi-clock" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Time Management</span>
+            }
+        </NavLink>
+    </div>
+
+    <div class="nav-item @(IsActiveRoute("communication"))" @onclick="@(() => NavigateTo("communication"))">
+        <NavLink class="nav-link" href="communication">
+            <span class="oi oi-chat" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Communication</span>
+            }
+        </NavLink>
+    </div>
+
+    <div class="nav-item @(IsActiveRoute("emotional-intelligence"))" @onclick="@(() => NavigateTo("emotional-intelligence"))">
+        <NavLink class="nav-link" href="emotional-intelligence">
+            <span class="oi oi-heart" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Emotional Intelligence</span>
+            }
+        </NavLink>
+    </div>
+
+    <div class="nav-item @(IsActiveRoute("financial-literacy"))" @onclick="@(() => NavigateTo("financial-literacy"))">
+        <NavLink class="nav-link" href="financial-literacy">
+            <span class="oi oi-dollar" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Financial Literacy</span>
+            }
+        </NavLink>
+    </div>
+
+    <div class="nav-item @(IsActiveRoute("health-fitness"))" @onclick="@(() => NavigateTo("health-fitness"))">
+        <NavLink class="nav-link" href="health-fitness">
+            <span class="oi oi-heart" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Health & Fitness</span>
+            }
+        </NavLink>
+    </div>
+
+    <div class="nav-item @(IsActiveRoute("leadership"))" @onclick="@(() => NavigateTo("leadership"))">
+        <NavLink class="nav-link" href="leadership">
+            <span class="oi oi-people" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Leadership</span>
+            }
+        </NavLink>
+    </div>
+
+    <div class="nav-item @(IsActiveRoute("public-speaking"))" @onclick="@(() => NavigateTo("public-speaking"))">
+        <NavLink class="nav-link" href="public-speaking">
+            <span class="oi oi-microphone" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Public Speaking</span>
+            }
+        </NavLink>
+    </div>
+
+    <!-- ✅ Logout Button -->
+    <div class="nav-item logout-item" @onclick="Logout">
+        <NavLink class="nav-link" href="#">
+            <span class="oi oi-account-logout" aria-hidden="true"></span>
+            @if (IsExpanded)
+            {
+                <span class="nav-text">Logout</span>
+            }
+        </NavLink>
+    </div>
+</nav>
+
+@code {
+    [Parameter]
+    public bool IsExpanded { get; set; } = true;
+
+    private string IsActiveRoute(string route)
+    {
+        var currentUri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        return currentUri.StartsWith(route, StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty;
+    }
+
+    private void NavigateTo(string route)
+    {
+        NavigationManager.NavigateTo("/" + route);
+    }
+
+    private void Logout()
+    {
+        // Replace with actual logout logic
+        NavigationManager.NavigateTo("/login");
+    }
+}

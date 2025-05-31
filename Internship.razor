@@ -1,0 +1,2447 @@
+﻿@page "/jobs-internships"
+@using Microsoft.AspNetCore.Components.Web
+@using System.ComponentModel.DataAnnotations
+@using Google.Cloud.Firestore;
+@inject FirebaseService FirebaseService
+@inject IJSRuntime JS
+
+
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap logo-icon"></i>
+            <span>Student<br />Dashboard</span>
+        </div>
+        <div class="nav-container">
+        <nav>
+            <a class="nav-link" href="/home">
+                <i class="fas fa-home"></i>
+                <span>Home Page</span>
+            </a>
+            <a class="nav-link" href="/dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Student Dashboard</span>
+            </a>
+            <a class="nav-link" href="/attendance">
+                <i class="fas fa-calendar-check"></i>
+                <span>Attendance and Leave</span>
+            </a>
+            <a class="nav-link" href="/registration">
+                <i class="fas fa-id-card"></i>
+                <span>Registration</span>
+            </a>
+            <a class="nav-link" href="/courses">
+                <i class="fas fa-book"></i>
+                <span>Course registration</span>
+            </a>
+            <a class="nav-link active" href="/careers">
+                <i class="fas fa-briefcase"></i>
+                <span>Internships and Jobs</span>
+            </a>
+            <a class="nav-link" href="/programs">
+                <i class="fas fa-list-alt"></i>
+                <span>Programs Offered</span>
+            </a>
+            <a class="nav-link" href="/announcements">
+                <i class="fas fa-bullhorn"></i>
+                <span>Announcements</span>
+            </a>
+            <a class="nav-link" href="/feedback">
+                <i class="fas fa-comment-dots"></i>
+                <span>Feedback and complaint</span>
+            </a>
+            <a class="nav-link" href="/clubs">
+                <i class="fas fa-users"></i>
+                <span>Societies and Clubs</span>
+            </a>
+            <a class="nav-link" href="/inbox">
+                <i class="fas fa-inbox"></i>
+                <span>Inbox</span>
+                <span class="notification-badge">3</span>
+            </a>
+            <a class="nav-link" href="/chat">
+                <i class="fas fa-robot"></i>
+                <span>Chat AI</span>
+            </a>
+            <a class="nav-link logout" href="/logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+                <div class="user-profile-container">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="profile-pic" />
+                        <div class="profile-info">
+                            <span class="username">Mustafa Ahmed</span>
+                            <span class="user-role">Computer Science</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+<main class="main-content">
+    <!-- Header -->
+    <header class="content-header">
+        <div class="header-content">
+            <h1>Career Opportunities</h1>
+            <div class="header-tabs">
+                <button class="tab-button @(activeTab == "internships" ? "active" : "")"
+                        @onclick='() => SetActiveTab("internships")'>
+                    <i class="fas fa-user-graduate"></i> Internships
+                </button>
+                <button class="tab-button @(activeTab == "jobs" ? "active" : "")"
+                        @onclick='() => SetActiveTab("jobs")'>
+                    <i class="fas fa-briefcase"></i> Jobs
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Search and Filters -->
+        <div class="search-container">
+            <div class="search-bar-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Search by title, company, or keywords..."
+                           @bind="searchTerm" @oninput="OnSearchInput" />
+                    <button class="search-btn">Search</button>
+                </div>
+            <div class="advanced-search-toggle" @onclick="ToggleAdvancedSearch">
+                <i class="fas @(showAdvancedSearch ? "fa-chevron-up" : "fa-chevron-down")"></i>
+                <span>Advanced Search</span>
+            </div>
+            @if (showAdvancedSearch)
+            {
+                <div class="advanced-search">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                            <select @bind="locationFilters" class="filter-select">
+                                <option value="">All Locations</option>
+                                <option value="Islamabad">Islamabad</option>
+                                <option value="Rawalpindi">Rawalpindi</option>
+                                <option value="Karachi">Karachi</option>
+                                <option value="Lahore">Lahore</option>
+                                <option value="Remote">Remote</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-clock"></i> Job Type</label>
+                            <select @bind="typeFilters" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-dollar-sign"></i> Salary Range</label>
+                            <select @bind="salaryFilters" class="filter-select">
+                                <option value="">Any Salary</option>
+                                <option value="10000-30000">Rs 10,000 - 30,000</option>
+                                <option value="30000-50000">Rs 30,000 - 50,000</option>
+                                <option value="50000-100000">Rs 50,000 - 100,000</option>
+                                <option value="100000+">Rs 100,000+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label><i class="fas fa-calendar"></i> Date Posted</label>
+                            <select @bind="datePostedFilters" class="filter-select">
+                                <option value="">Any Time</option>
+                                <option value="1">Last 24 hours</option>
+                                <option value="3">Last 3 days</option>
+                                <option value="7">Last week</option>
+                                <option value="30">Last month</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-building"></i> Company</label>
+                            <input type="text" @bind="companyFilters" class="filter-input" placeholder="Filter by company" />
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-graduation-cap"></i> Experience Level</label>
+                            <select @bind="experienceFilters" class="filter-select">
+                                <option value="">Any Experience</option>
+                                <option value="Entry Level">Entry Level</option>
+                                <option value="Mid Level">Mid Level</option>
+                                <option value="Senior Level">Senior Level</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <!-- Content Area -->
+    @if (showDetail)
+    {
+        <div class="detail-view">
+            <button class="back-button" @onclick="CloseDetail">
+                <i class="fas fa-arrow-left"></i> Back to Listings
+            </button>
+            <div class="detail-content">
+                <div class="detail-header">
+                    <div class="detail-title">
+                        <h2>@selectedItem.Title</h2>
+                        <p class="company-link">
+                            <a href="@selectedItem.CompanyWebsite" target="_blank">@selectedItem.Company</a>
+                            <span class="verified-badge" title="Verified employer">
+                                <i class="fas fa-check-circle"></i>
+                            </span>
+                        </p>
+                        <div class="detail-meta">
+                            <span class="location"><i class="fas fa-map-marker-alt"></i> @selectedItem.Location</span>
+                            <span class="salary"><i class="fas fa-money-bill-wave"></i> @selectedItem.Salary</span>
+                            <span class="type"><i class="fas fa-clock"></i> @selectedItem.Type</span>
+                            <span class="posted-date"><i class="far fa-clock"></i> @selectedItem.PostedDate</span>
+                        </div>
+                    </div>
+                    <div class="detail-actions-top">
+                        <button class="save-button">
+                            <i class="far @(savedItems.Contains(selectedItem) ? "fa-bookmark" : "fa-bookmark")"></i> @(savedItems.Contains(selectedItem) ? "Saved" : "Save")
+                        </button>
+                        <button class="apply-button" @onclick="ShowApplicationForm">
+                            <i class="fas fa-paper-plane"></i> Apply Now
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-sections">
+                    <div class="detail-section">
+                        <h3><i class="fas fa-info-circle"></i> Overview</h3>
+                        <div class="description">
+                            @selectedItem.Description
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3><i class="fas fa-tasks"></i> Responsibilities</h3>
+                        <ul class="responsibilities-list">
+                            @foreach (var responsibility in selectedItem.Responsibilities.Split('|'))
+                            {
+                                if (!string.IsNullOrWhiteSpace(responsibility))
+                                {
+                                    <li>@responsibility</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3><i class="fas fa-check-circle"></i> Requirements</h3>
+                        <ul class="requirements-list">
+                            @foreach (var requirement in selectedItem.Requirements.Split('|'))
+                            {
+                                if (!string.IsNullOrWhiteSpace(requirement))
+                                {
+                                    <li>@requirement</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3><i class="fas fa-map-marked-alt"></i> Job Location</h3>
+                        <div class="location-details">
+                            <p><i class="fas fa-building"></i> @selectedItem.Company</p>
+                            <p><i class="fas fa-map-marker-alt"></i> @selectedItem.Location</p>
+                            @if (!string.IsNullOrEmpty(selectedItem.MapLink))
+                            {
+                                <div class="map-preview">
+                                    <a href="@selectedItem.MapLink" target="_blank" class="view-map">
+                                        <i class="fas fa-map"></i> View on Map
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3><i class="fas fa-file-alt"></i> Job Details</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Job Type:</span>
+                                <span class="detail-value">@selectedItem.Type</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Salary:</span>
+                                <span class="detail-value">@selectedItem.Salary</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Schedule:</span>
+                                <span class="detail-value">@selectedItem.Schedule</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Experience Required:</span>
+                                <span class="detail-value">@selectedItem.ExperienceLevel</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Posted:</span>
+                                <span class="detail-value">@selectedItem.PostedDate</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Openings:</span>
+                                <span class="detail-value">@selectedItem.Openings</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section company-info">
+                        <h3><i class="fas fa-building"></i> About @selectedItem.Company</h3>
+                        <div class="company-description">
+                            @selectedItem.CompanyDescription
+                        </div>
+                        <div class="company-stats">
+                            <span><i class="fas fa-users"></i> @selectedItem.CompanySize employees</span>
+                            <span><i class="fas fa-globe"></i> <a href="@selectedItem.CompanyWebsite" target="_blank">@selectedItem.CompanyWebsite</a></span>
+                            <span><i class="fas fa-industry"></i> @selectedItem.Industry</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button class="save-button">
+                            <i class="far @(savedItems.Contains(selectedItem) ? "fa-bookmark" : "fa-bookmark")"></i> @(savedItems.Contains(selectedItem) ? "Saved" : "Save")
+                        </button>
+                        <button class="share-button">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                        <button class="report-button">
+                            <i class="fas fa-flag"></i> Report Job
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (showApplicationForm)
+    {
+        <div class="application-form">
+            <button class="back-button" @onclick="CloseApplicationForm">
+                <i class="fas fa-arrow-left"></i> Back to Job
+            </button>
+            <div class="form-container">
+                <div class="form-header">
+                    <h2><i class="fas fa-paper-plane"></i> Apply for @selectedItem.Title</h2>
+                    <p class="company-name">at @selectedItem.Company</p>
+                    <div class="application-steps">
+                        <div class="step active">
+                            <span class="step-number">1</span>
+                            <span class="step-title">Personal Info</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <span class="step-title">Resume</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <span class="step-title">Review</span>
+                        </div>
+                    </div>
+                </div>
+
+                    <EditForm EditContext="editContext">
+
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                        @if (!string.IsNullOrEmpty(successMessage))
+                        {
+                            <div class="alert alert-success">@successMessage</div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger">@errorMessage</div>
+                        }
+
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-user"></i> Personal Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <InputText @bind-Value="applicationModel.FullName" class="form-input" placeholder="Enter your full name" />
+                                <ValidationMessage For="@(() => applicationModel.FullName)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <InputText @bind-Value="applicationModel.Email" type="email" class="form-input" placeholder="your.email@example.com" />
+                                <ValidationMessage For="@(() => applicationModel.Email)" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Phone Number *</label>
+                                <InputText @bind-Value="applicationModel.PhoneNumber" class="form-input" placeholder="+92 300 1234567" />
+                                <ValidationMessage For="@(() => applicationModel.PhoneNumber)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Current City *</label>
+                                <InputText @bind-Value="applicationModel.City" class="form-input" placeholder="Your current city" />
+                                <ValidationMessage For="@(() => applicationModel.City)" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Address</label>
+                            <InputTextArea @bind-Value="applicationModel.Address" class="form-textarea" placeholder="Your current address" />
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Education & Experience</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Education Level *</label>
+                                <InputSelect @bind-Value="applicationModel.EducationLevel" class="form-select">
+                                    <option value="">Select Education Level</option>
+                                    <option value="High School">High School</option>
+                                    <option value="Bachelor's">Bachelor Degree</option>
+                                    <option value="Master's">Master Degree</option>
+                                    <option value="PhD">PhD</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => applicationModel.EducationLevel)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Field of Study</label>
+                                <InputText @bind-Value="applicationModel.FieldOfStudy" class="form-input" placeholder="Your major or field" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Experience (Years) *</label>
+                                <InputNumber @bind-Value="applicationModel.Experience" class="form-input" />
+                                <ValidationMessage For="@(() => applicationModel.Experience)" />
+                            </div>
+                            <div class="form-group">
+                                <label>Current/Last Job Title</label>
+                                <InputText @bind-Value="applicationModel.CurrentJobTitle" class="form-input" placeholder="Your current or last position" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-file-alt"></i> Application Materials</h3>
+                        <div class="form-group">
+                            <label>Cover Letter</label>
+                            <InputTextArea @bind-Value="applicationModel.CoverLetter" class="form-textarea" rows="6"
+                                        placeholder="Tell us why you're the perfect candidate for this position..." />
+                            <small class="hint">Highlight your relevant skills and experience (optional but recommended)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload CV *</label>
+                            <div class="file-upload">
+                                <InputFile class="form-file" accept=".pdf,.doc,.docx" />
+                                <div class="upload-preview">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Drag & drop your CV here or click to browse</span>
+                                    <small class="file-info">Supported formats: PDF, DOC, DOCX (Max 5MB)</small>
+                                </div>
+                            </div>
+                            <ValidationMessage For="@(() => applicationModel.CVFile)" />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Additional Documents</label>
+                            <div class="file-upload">
+                                <InputFile class="form-file" multiple accept=".pdf,.doc,.docx,.jpg,.png" />
+                                <div class="upload-preview">
+                                    <i class="fas fa-file-archive"></i>
+                                    <span>Add certificates, portfolio, or other supporting documents</span>
+                                    <small class="file-info">You can upload multiple files (Max 10MB total)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="cancel-button" @onclick="CloseApplicationForm">Cancel</button>
+                            <button class="btn btn-primary" type="button" @onclick="SubmitApplication">
+                                Submit Application
+                            </button>
+
+
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="listings-container">
+            <div class="results-header">
+                <h3>@filteredItems.Count @(activeTab == "internships" ? "Internships" : "Jobs") Found</h3>
+                <div class="sort-options">
+                    <label>Sort by:</label>
+                    <select @bind="sortOption" class="sort-select">
+                        <option value="relevance">Relevance</option>
+                        <option value="date">Most Recent</option>
+                        <option value="salary-desc">Highest Salary</option>
+                        <option value="salary-asc">Lowest Salary</option>
+                    </select>
+                </div>
+            </div>
+            
+            @if (filteredItems.Count == 0)
+            {
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <h3>No opportunities found</h3>
+                    <p>Try adjusting your search filters or search for something else</p>
+                    <button class="reset-filters" @onclick="ResetFilters">
+                        <i class="fas fa-sync-alt"></i> Reset Filters
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="listings-grid">
+                    @foreach (var item in filteredItems)
+                    {
+                        <div class="listing-card" @onclick="() => ShowDetail(item)">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h3>@item.Title</h3>
+                                    <p class="company">
+                                        <a href="@item.CompanyWebsite" target="_blank" @onclick:stopPropagation="true">
+                                            @item.Company
+                                        </a>
+                                        @if (item.IsVerified)
+                                        {
+                                            <span class="verified-badge" title="Verified employer">
+                                                <i class="fas fa-check-circle"></i>
+                                            </span>
+                                        }
+                                    </p>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="save-button" @onclick:stopPropagation="true" @onclick="() => ToggleSaveItem(item)">
+                                        <i class="far @(savedItems.Contains(item) ? "fa-bookmark" : "fa-bookmark")"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-meta">
+                                    <span class="location"><i class="fas fa-map-marker-alt"></i> @item.Location</span>
+                                    <span class="salary"><i class="fas fa-money-bill-wave"></i> @item.Salary</span>
+                                    <span class="type"><i class="fas fa-clock"></i> @item.Type</span>
+                                </div>
+                                <div class="card-description">
+                                    @item.ShortDescription
+                                </div>
+                                <div class="card-tags">
+                                    @foreach (var tag in item.Tags.Take(3))
+                                    {
+                                        <span class="tag">@tag</span>
+                                    }
+                                    @if (item.Tags.Length > 3)
+                                    {
+                                        <span class="tag-more">+@(item.Tags.Length - 3) more</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <span class="posted-date"><i class="far fa-clock"></i> @item.PostedDate</span>
+                                <span class="urgent-badge" style="@(item.IsUrgent ? "" : "display:none;")">
+                                    <i class="fas fa-exclamation-circle"></i> Urgent Hiring
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                @if (filteredItems.Count > 10)
+                {
+                    <div class="pagination">
+                        <button class="page-button @(currentPage == 1 ? "disabled" : "")" @onclick="() => ChangePage(-1)">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <button class="page-button @(currentPage == i ? "active" : "")" @onclick="() => GoToPage(i)">
+                                @i
+                            </button>
+                        }
+                        <button class="page-button @(currentPage == totalPages ? "disabled" : "")" @onclick="() => ChangePage(1)">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                }
+            }
+        </div>
+    }
+   </main>
+</div>
+@code {
+    private string successMessage = "";
+    private string errorMessage = "";
+    private bool sidebarOpen = true;
+    private string activeTab = "internships";
+    private bool showDetail = false;
+    private bool showApplicationForm = false;
+    private bool showAdvancedSearch = false;
+    private JobInternshipItem selectedItem = new();
+    private ApplicationModel applicationModel = new();
+    private List<JobInternshipItem> savedItems = new();
+    
+    private string searchTerm = "";
+    // private string locationFilters = "";
+    // private string typeFilters = "";
+    private string salaryFilters = "";
+    private string datePostedFilters = "";
+    private string companyFilters = "";
+    private string experienceFilters = "";
+    private string sortOption = "relevance";
+    
+    private int currentPage = 1;
+    private int itemsPerPage = 10;
+    private int totalPages = 1;
+    
+    private List<JobInternshipItem> internships = new();
+    private List<JobInternshipItem> jobs = new();
+    private List<JobInternshipItem> filteredItems = new();
+
+    public class JobInternshipItem
+    {
+        public string Title { get; set; } = "";
+        public string Company { get; set; } = "";
+        public string CompanyWebsite { get; set; } = "";
+        public string Location { get; set; } = "";
+        public string Salary { get; set; } = "";
+        public string Type { get; set; } = "";
+        public string Schedule { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ShortDescription { get; set; } = "";
+        public string PostedDate { get; set; } = "";
+        public string[] Tags { get; set; } = Array.Empty<string>();
+        public string Responsibilities { get; set; } = "";
+        public string Requirements { get; set; } = "";
+        public string ExperienceLevel { get; set; } = "";
+        public string Openings { get; set; } = "1";
+        public string MapLink { get; set; } = "";
+        public string CompanyDescription { get; set; } = "";
+        public string CompanySize { get; set; } = "";
+        public string Industry { get; set; } = "";
+        public bool IsVerified { get; set; } = false;
+        public bool IsUrgent { get; set; } = false;
+    }
+    [FirestoreData]
+    public class ApplicationModel
+    {
+        [FirestoreProperty]
+        public string UserId { get; set; }
+        [FirestoreProperty]
+        [Required(ErrorMessage = "Full name is required")]
+        public string FullName { get; set; } = "";
+        [FirestoreProperty]
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string Email { get; set; } = "";
+        [FirestoreProperty]
+        [Required(ErrorMessage = "Phone number is required")]
+        public string PhoneNumber { get; set; } = "";
+        [FirestoreProperty]
+        public string Address { get; set; } = "";
+        [FirestoreProperty]
+        [Required(ErrorMessage = "City is required")]
+        public string City { get; set; } = "";
+        [FirestoreProperty]
+        [Required(ErrorMessage = "Education level is required")]
+        public string EducationLevel { get; set; } = "";
+        [FirestoreProperty]
+        public string FieldOfStudy { get; set; } = "";
+        [FirestoreProperty]
+        [Required(ErrorMessage = "Experience is required")]
+        [Range(0, 50, ErrorMessage = "Please enter a valid number of years")]
+        public int Experience { get; set; } = 0;
+        [FirestoreProperty]
+        public string CurrentJobTitle { get; set; } = "";
+        [FirestoreProperty]
+        public string CoverLetter { get; set; } = "";
+        
+        
+        public IBrowserFile CVFile { get; set; }
+        
+        public IBrowserFile[] AdditionalFiles { get; set; } = Array.Empty<IBrowserFile>();
+    }
+
+
+    protected override void OnInitialized()
+    {
+        applicationModel = new ApplicationModel();
+        editContext = new EditContext(applicationModel);
+        InitializeData();
+        ApplyFilters();
+    }
+
+    private void InitializeData()
+    {
+        // Initialize Internships
+        internships = new List<JobInternshipItem>
+        {
+            new() { Title = "Student Internship", Company = "TechCorp", CompanyWebsite = "https://techcorp.com", Location = "Islamabad E-11", Salary = "From Rs 15000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "We are seeking an enthusiastic Student Intern to join our team. This internship opportunity offers valuable hands-on experience in a dynamic work environment and the opportunity to be mentored by our senior team.", PostedDate = "2 days ago" },
+            new() { Title = "Social Media Intern", Company = "Digital Agency", CompanyWebsite = "https://digitalagency.com", Location = "Rawalpindi", Salary = "From Rs 12000 per month", Type = "Part-time", Schedule = "Flexible hours", Description = "Looking for a creative Social Media Intern to support our social media and marketing efforts. You will be responsible for creating content and managing social media platforms.", PostedDate = "1 day ago" },
+            new() { Title = "Python/React.js Intern", Company = "WebWorks", CompanyWebsite = "https://webworks.com", Location = "E-11 Markaz", Salary = "From Rs 18000 per month", Type = "Full-time", Schedule = "9 AM to 5 PM", Description = "We're looking for an intern passionate about web development with basic knowledge of Python and React.js. Great opportunity to learn and grow.", PostedDate = "3 days ago" },
+            new() { Title = "Marketing Intern", Company = "BrandMax", CompanyWebsite = "https://brandmax.com", Location = "Islamabad", Salary = "From Rs 14000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Join our marketing team as an intern and gain hands-on experience in digital marketing, content creation, and campaign management.", PostedDate = "1 week ago" },
+            new() { Title = "Data Analytics Intern", Company = "DataViz", CompanyWebsite = "https://dataviz.com", Location = "Karachi", Salary = "From Rs 16000 per month", Type = "Remote", Schedule = "Flexible", Description = "Seeking a data analytics intern to help with data collection, analysis, and visualization projects using modern tools and techniques.", PostedDate = "4 days ago" },
+            new() { Title = "Graphic Design Intern", Company = "Creative Studio", CompanyWebsite = "https://creativestudio.com", Location = "Lahore", Salary = "From Rs 13000 per month", Type = "Part-time", Schedule = "20 hours/week", Description = "Looking for a creative graphic design intern to assist with various design projects including branding, web graphics, and print materials.", PostedDate = "5 days ago" },
+            new() { Title = "HR Intern", Company = "PeopleFirst", CompanyWebsite = "https://peoplefirst.com", Location = "Islamabad", Salary = "From Rs 12000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Join our HR team as an intern and learn about recruitment, employee relations, and HR operations in a fast-paced environment.", PostedDate = "6 days ago" },
+            new() { Title = "Finance Intern", Company = "FinanceHub", CompanyWebsite = "https://financehub.com", Location = "Rawalpindi", Salary = "From Rs 15000 per month", Type = "Full-time", Schedule = "9 AM to 6 PM", Description = "Opportunity to work with our finance team on budgeting, financial analysis, and reporting. Perfect for finance students.", PostedDate = "1 week ago" },
+            new() { Title = "Content Writing Intern", Company = "WordCraft", CompanyWebsite = "https://wordcraft.com", Location = "Remote", Salary = "From Rs 11000 per month", Type = "Remote", Schedule = "Flexible hours", Description = "We're looking for a talented content writing intern to create engaging content for blogs, websites, and social media platforms.", PostedDate = "2 days ago" },
+            new() { Title = "Sales Intern", Company = "SalesForce Pro", CompanyWebsite = "https://salesforcepro.com", Location = "Karachi", Salary = "From Rs 14000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Join our sales team as an intern and learn about lead generation, customer relationship management, and sales strategies.", PostedDate = "3 days ago" },
+            new() { Title = "Mobile App Development Intern", Company = "AppMakers", CompanyWebsite = "https://appmakers.com", Location = "Lahore", Salary = "From Rs 17000 per month", Type = "Full-time", Schedule = "9 AM to 5 PM", Description = "Exciting opportunity for a mobile app development intern to work on React Native and Flutter projects with experienced developers.", PostedDate = "4 days ago" },
+            new() { Title = "Research Intern", Company = "ResearchLab", CompanyWebsite = "https://researchlab.com", Location = "Islamabad", Salary = "From Rs 13000 per month", Type = "Part-time", Schedule = "15 hours/week", Description = "Looking for a research intern to assist with data collection, literature review, and research documentation for ongoing projects.", PostedDate = "5 days ago" },
+            new() { Title = "Video Editing Intern", Company = "MediaWorks", CompanyWebsite = "https://mediaworks.com", Location = "Rawalpindi", Salary = "From Rs 12000 per month", Type = "Part-time", Schedule = "Flexible", Description = "Creative video editing intern needed to work on promotional videos, social media content, and corporate presentations.", PostedDate = "1 week ago" },
+            new() { Title = "Business Development Intern", Company = "GrowthPartners", CompanyWebsite = "https://growthpartners.com", Location = "Karachi", Salary = "From Rs 16000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Join our business development team to learn about market research, client outreach, and partnership development.", PostedDate = "6 days ago" },
+            new() { Title = "UI/UX Design Intern", Company = "DesignStudio", CompanyWebsite = "https://designstudio.com", Location = "Lahore", Salary = "From Rs 15000 per month", Type = "Full-time", Schedule = "9 AM to 6 PM", Description = "Seeking a UI/UX design intern to work on web and mobile app interfaces. Experience with Figma and Adobe XD preferred.", PostedDate = "2 days ago" },
+            new() { Title = "Quality Assurance Intern", Company = "TestPro", CompanyWebsite = "https://testpro.com", Location = "Islamabad", Salary = "From Rs 14000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "QA intern position available to learn about software testing, bug reporting, and quality assurance processes.", PostedDate = "3 days ago" },
+            new() { Title = "Cybersecurity Intern", Company = "SecureNet", CompanyWebsite = "https://securenet.com", Location = "Remote", Salary = "From Rs 18000 per month", Type = "Remote", Schedule = "Flexible", Description = "Cybersecurity intern opportunity to learn about network security, penetration testing, and security audit procedures.", PostedDate = "4 days ago" },
+            new() { Title = "Project Management Intern", Company = "PM Solutions", CompanyWebsite = "https://pmsolutions.com", Location = "Rawalpindi", Salary = "From Rs 13000 per month", Type = "Full-time", Schedule = "9 AM to 5 PM", Description = "Learn project management skills including planning, execution, and monitoring of various client projects.", PostedDate = "5 days ago" },
+            new() { Title = "E-commerce Intern", Company = "ShopSmart", CompanyWebsite = "https://shopsmart.com", Location = "Karachi", Salary = "From Rs 12000 per month", Type = "Part-time", Schedule = "20 hours/week", Description = "E-commerce intern to help with online store management, inventory tracking, and customer service operations.", PostedDate = "1 week ago" },
+            new() { Title = "AI/ML Intern", Company = "AI Innovations", CompanyWebsite = "https://aiinnovations.com", Location = "Lahore", Salary = "From Rs 20000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Exciting opportunity for an AI/ML intern to work on machine learning projects and data science initiatives.", PostedDate = "2 days ago" }
+        };
+
+        // Initialize Jobs
+        jobs = new List<JobInternshipItem>
+        {
+            new() { Title = "Senior HR Manager", Company = "Pakistan Telecommunication Company Limited (PTCL)", CompanyWebsite = "https://ptcl.com.pk", Location = "Islamabad F-10/2", Salary = "Rs 80,000 - 120,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "PTCL is seeking a dynamic and experienced HR Manager to join our team and drive our human resources initiatives. You will be responsible for recruiting, training, and managing employees.", PostedDate = "1 day ago" },
+            new() { Title = "Sales Executive", Company = "Jaguar", CompanyWebsite = "https://jaguar.com", Location = "Rawalpindi", Salary = "Rs 50,000 - 80,000 per month", Type = "Full-time", Schedule = "Monday to Saturday", Description = "Looking for an experienced Sales Executive to join our luxury car dealership. Must have excellent communication skills and sales experience.", PostedDate = "2 days ago" },
+            new() { Title = "Software Engineer", Company = "TechSolutions", CompanyWebsite = "https://techsolutions.com", Location = "Islamabad", Salary = "Rs 70,000 - 100,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "We are looking for a skilled Software Engineer with experience in .NET, C#, and modern web technologies to join our development team.", PostedDate = "3 days ago" },
+            new() { Title = "Marketing Manager", Company = "BrandBuilders", CompanyWebsite = "https://brandbuilders.com", Location = "Karachi", Salary = "Rs 90,000 - 130,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Seeking an experienced Marketing Manager to develop and execute comprehensive marketing strategies for our diverse client portfolio.", PostedDate = "4 days ago" },
+            new() { Title = "Data Scientist", Company = "Analytics Pro", CompanyWebsite = "https://analyticspro.com", Location = "Lahore", Salary = "Rs 100,000 - 150,000 per month", Type = "Full-time", Schedule = "Flexible hours", Description = "Join our data science team to work on cutting-edge analytics projects using Python, R, and machine learning technologies.", PostedDate = "5 days ago" },
+            new() { Title = "Product Manager", Company = "InnovateTech", CompanyWebsite = "https://innovatetech.com", Location = "Remote", Salary = "Rs 120,000 - 180,000 per month", Type = "Remote", Schedule = "Flexible", Description = "Lead product development and strategy for our SaaS platform. Experience with agile methodologies and product lifecycle management required.", PostedDate = "1 week ago" },
+            new() { Title = "Financial Analyst", Company = "Finance Corp", CompanyWebsite = "https://financecorp.com", Location = "Islamabad", Salary = "Rs 60,000 - 90,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Analyze financial data, prepare reports, and provide insights to support business decision-making processes.", PostedDate = "6 days ago" },
+            new() { Title = "UX/UI Designer", Company = "Creative Minds", CompanyWebsite = "https://creativeminds.com", Location = "Rawalpindi", Salary = "Rs 65,000 - 95,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Design intuitive and engaging user experiences for web and mobile applications. Proficiency in Figma, Sketch, and Adobe Creative Suite required.", PostedDate = "2 days ago" },
+            new() { Title = "DevOps Engineer", Company = "CloudTech", CompanyWebsite = "https://cloudtech.com", Location = "Karachi", Salary = "Rs 85,000 - 125,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Manage CI/CD pipelines, cloud infrastructure, and deployment processes. Experience with AWS, Docker, and Kubernetes preferred.", PostedDate = "3 days ago" },
+            new() { Title = "Business Analyst", Company = "Consulting Partners", CompanyWebsite = "https://consultingpartners.com", Location = "Lahore", Salary = "Rs 70,000 - 100,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Analyze business processes, gather requirements, and recommend solutions to improve operational efficiency.", PostedDate = "4 days ago" },
+            new() { Title = "Content Manager", Company = "Digital Media", CompanyWebsite = "https://digitalmedia.com", Location = "Remote", Salary = "Rs 55,000 - 80,000 per month", Type = "Remote", Schedule = "Flexible", Description = "Manage content strategy, create engaging content, and oversee content marketing initiatives across multiple platforms.", PostedDate = "5 days ago" },
+            new() { Title = "Network Administrator", Company = "IT Services", CompanyWebsite = "https://itservices.com", Location = "Islamabad", Salary = "Rs 60,000 - 85,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Maintain and troubleshoot network infrastructure, ensure system security, and provide technical support to users.", PostedDate = "1 week ago" },
+            new() { Title = "Mobile App Developer", Company = "App Solutions", CompanyWebsite = "https://appsolutions.com", Location = "Rawalpindi", Salary = "Rs 75,000 - 110,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Develop and maintain mobile applications for iOS and Android platforms using React Native or Flutter.", PostedDate = "6 days ago" },
+            new() { Title = "SEO Specialist", Company = "Digital Growth", CompanyWebsite = "https://digitalgrowth.com", Location = "Karachi", Salary = "Rs 45,000 - 70,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Optimize websites for search engines, conduct keyword research, and implement SEO strategies to improve organic rankings.", PostedDate = "2 days ago" },
+            new() { Title = "Cybersecurity Analyst", Company = "SecureTech", CompanyWebsite = "https://securetech.com", Location = "Lahore", Salary = "Rs 90,000 - 130,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Monitor security threats, conduct vulnerability assessments, and implement security measures to protect organizational assets.", PostedDate = "3 days ago" },
+            new() { Title = "Operations Manager", Company = "LogiCorp", CompanyWebsite = "https://logicorp.com", Location = "Islamabad", Salary = "Rs 95,000 - 140,000 per month", Type = "Full-time", Schedule = "Monday to Saturday", Description = "Oversee daily operations, manage teams, and ensure efficient workflow processes across multiple departments.", PostedDate = "4 days ago" },
+            new() { Title = "Database Administrator", Company = "DataSystems", CompanyWebsite = "https://datasystems.com", Location = "Remote", Salary = "Rs 80,000 - 115,000 per month", Type = "Remote", Schedule = "Flexible", Description = "Manage database systems, ensure data integrity, and optimize database performance for enterprise applications.", PostedDate = "5 days ago" },
+            new() { Title = "Quality Assurance Engineer", Company = "TestingSolutions", CompanyWebsite = "https://testingsolutions.com", Location = "Rawalpindi", Salary = "Rs 55,000 - 80,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Design and execute test cases, identify bugs, and ensure software quality through comprehensive testing methodologies.", PostedDate = "1 week ago" },
+            new() { Title = "Technical Writer", Company = "DocuTech", CompanyWebsite = "https://docutech.com", Location = "Karachi", Salary = "Rs 50,000 - 75,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Create technical documentation, user manuals, and help guides for software products and applications.", PostedDate = "6 days ago" },
+            new() { Title = "Machine Learning Engineer", Company = "AI Dynamics", CompanyWebsite = "https://aidynamics.com", Location = "Lahore", Salary = "Rs 110,000 - 160,000 per month", Type = "Full-time", Schedule = "Monday to Friday", Description = "Develop and deploy machine learning models, work with large datasets, and implement AI solutions for business applications.", PostedDate = "2 days ago" }
+        };
+    }
+    private void ToggleSidebar()
+    {
+        sidebarOpen = !sidebarOpen;
+    }
+
+    private string _locationFilter = "";
+    private string locationFilters
+    {
+        get => _locationFilter;
+        set
+        {
+            _locationFilter = value;
+            ApplyFilters();
+        }
+    }
+
+    private string _typeFilter = "";
+    private string typeFilters
+    {
+        get => _typeFilter;
+        set
+        {
+            _typeFilter = value;
+            ApplyFilters();
+        }
+    }
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+        currentPage = 1;
+        ApplyFilters();
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? "";
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        var sourceList = activeTab == "internships" ? internships : jobs;
+
+        filteredItems = sourceList.Where(item =>
+            (string.IsNullOrEmpty(searchTerm) ||
+             item.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+             item.Company.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+             item.Location.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+             item.Tags.Any(t => t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))) &&
+            (string.IsNullOrEmpty(locationFilters) || item.Location.Contains(locationFilters)) &&
+            (string.IsNullOrEmpty(typeFilters) || item.Type.Contains(typeFilters)) &&
+            (string.IsNullOrEmpty(companyFilters) || item.Company.Contains(companyFilters, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(experienceFilters) || item.ExperienceLevel.Contains(experienceFilters))
+        ).ToList();
+
+        ApplySorting();
+        CalculatePagination();
+    }
+
+    private void ApplySorting()
+    {
+        switch (sortOption)
+        {
+            case "date":
+                filteredItems = filteredItems.OrderByDescending(i => i.PostedDate).ToList();
+                break;
+            case "salary-desc":
+                filteredItems = filteredItems.OrderByDescending(i => ExtractSalaryValue(i.Salary)).ToList();
+                break;
+            case "salary-asc":
+                filteredItems = filteredItems.OrderBy(i => ExtractSalaryValue(i.Salary)).ToList();
+                break;
+            default: // relevance
+                filteredItems = filteredItems.OrderByDescending(i =>
+                    (i.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ? 4 : 0) +
+                    (i.Company.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ? 3 : 0) +
+                    (i.Tags.Any(t => t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ? 2 : 0) +
+                    (i.Location.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ? 1 : 0)
+                ).ToList();
+                break;
+        }
+    }
+
+    private int ExtractSalaryValue(string salary)
+    {
+        // Extract numeric value from salary string for sorting
+        var match = System.Text.RegularExpressions.Regex.Match(salary, @"\d+,\d+|\d+");
+        if (match.Success)
+        {
+            return int.Parse(match.Value.Replace(",", ""));
+        }
+        return 0;
+    }
+
+    private void CalculatePagination()
+    {
+        totalPages = (int)Math.Ceiling((double)filteredItems.Count / itemsPerPage);
+        filteredItems = filteredItems.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage).ToList();
+    }
+
+    private void ChangePage(int delta)
+    {
+        currentPage += delta;
+        ApplyFilters();
+    }
+
+    private void GoToPage(int page)
+    {
+        currentPage = page;
+        ApplyFilters();
+    }
+
+    private void ShowDetail(JobInternshipItem item)
+    {
+        selectedItem = item;
+        showDetail = true;
+    }
+
+    private void CloseDetail()
+    {
+        showDetail = false;
+    }
+
+    private void ShowApplicationForm()
+    {
+        showApplicationForm = true;
+        showDetail = false;
+
+        // Pre-fill some user data if available
+        
+    }
+    private EditContext editContext;
+
+    private void CloseApplicationForm()
+    {
+        showApplicationForm = false;
+        showDetail = true;
+    }
+    private async Task SubmitApplication()
+    {
+        Console.WriteLine("SubmitApplication() called");
+        successMessage = "";
+        errorMessage = "";
+
+        var isValid = editContext.Validate(); // ✅ Manually trigger validation
+
+        if (!isValid)
+        {
+            Console.WriteLine("❌ Validation failed.");
+            errorMessage = "Please fill in all required fields.";
+            return;
+        }
+
+        try
+        {
+            string idToken = await JS.InvokeAsync<string>("getFirebaseIdToken");
+            Console.WriteLine("ID Token: " + idToken);
+
+            if (string.IsNullOrEmpty(idToken))
+            {
+                Console.WriteLine("⚠️ User is not logged in or token missing.");
+                errorMessage = "You must be logged in to submit your application.";
+                return;
+            }
+
+            string userId = await FirebaseService.VerifyIdTokenAsync(idToken);
+            Console.WriteLine("User ID: " + userId);
+
+            applicationModel.UserId = userId;
+
+            await FirebaseService.FirestoreDb
+                .Collection("users")
+                .Document(userId)
+                .Collection("jobApplications")
+                .AddAsync(applicationModel);
+
+            Console.WriteLine("✅ Application successfully submitted.");
+            successMessage = "🎉 Your application has been successfully submitted!";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("❌ Error submitting application: " + ex.Message);
+            errorMessage = "Submission failed: " + ex.Message;
+        }
+    }
+
+    private void ResetFilters()
+    {
+        searchTerm = "";
+        locationFilters = "";
+        typeFilters = "";
+        salaryFilters = "";
+        datePostedFilters = "";
+        companyFilters = "";
+        experienceFilters = "";
+        sortOption = "relevance";
+        currentPage = 1;
+        ApplyFilters();
+    }
+
+    private void ToggleAdvancedSearch()
+    {
+        showAdvancedSearch = !showAdvancedSearch;
+    }
+
+    private void ToggleSaveItem(JobInternshipItem item)
+    {
+        if (savedItems.Contains(item))
+        {
+            savedItems.Remove(item);
+        }
+        else
+        {
+            savedItems.Add(item);
+        }
+    }
+}
+
+<style>
+    :root {
+        --primary-color: #2557a7;
+        --secondary-color: #1a3e72;
+        --accent-color: #2557a7;
+        --accent-hover: #1a3e72;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --info-color: #17a2b8;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #343a40;
+        --text-light: #f8f9fa;
+        --text-muted: #6c757d;
+        --text-dark: #212529;
+        --border-radius: 6px;
+        --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        --transition: all 0.2s ease;
+    --primary-dark: #021526;    /* Dark blue for headers */
+    --primary-blue: #2557a7;    /* Primary blue */
+    --secondary-blue: #1a3e72;  /* Darker blue */
+    --accent-blue: #3a7bd5;     /* Lighter blue */
+    --light-bg: #f8fafc;        /* Light background */
+    --white: #ffffff;           /* White */
+    --text-dark: #2d3748;       /* Dark text */
+    --text-muted: #718096;      /* Muted text */
+    --border-color: #e2e8f0;    /* Border color */
+    }
+
+    /* Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.6;
+        color: var(--text-dark);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        background-color: var(--light-bg);
+       
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    button {
+        cursor: pointer;
+        transition: var(--transition);
+        font-family: inherit;
+    }
+
+    i {
+        margin-right: 8px;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        width: 280px;
+        background-color: var(--primary-dark);
+        color: var(--white);
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        border-right: 1px solid var(--medium-gray);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        padding: 0 20px 20px;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--white);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo-icon {
+        font-size: 24px;
+        margin-right: 12px;
+        color: var(--accent-color);
+    }
+
+    .nav-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .sidebar nav {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar nav::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        .sidebar nav::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 3px;
+        }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        color: rgba(255,255,255,0.8);
+        padding: 12px 15px;
+        margin: 5px 0;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        position: relative;
+        opacity: 0.9;
+        font-size: 15px;
+    }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+            .nav-link:hover i {
+                color: var(--accent-color);
+            }
+
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--white);
+            font-weight: 500;
+            opacity: 1;
+        }
+
+            .nav-link.active i {
+                color: var(--accent-color);
+            }
+
+    .notification-badge {
+        position: absolute;
+        right: 15px;
+        background-color: var(--danger-color);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+    .logout {
+        color: var(--danger-color);
+    }
+
+        .logout:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+    /* User Profile Styles - Now inside nav */
+    .user-profile-container {
+        margin-top: auto;
+        padding: 15px 0;
+        border-top: 1px solid var(--medium-gray);
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+    }
+
+        .user-profile:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+    .profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+        border: 2px solid var(--accent-color);
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .username {
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .user-role {
+        font-size: 12px;
+        opacity: 0.8;
+        color: var(--text-muted);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+        flex: 1;
+        margin-left: 280px;
+        min-height: 100vh;
+        margin-left: 280px;
+        padding-top: 20px;
+        background-color: var(--light-bg);
+        
+    }
+
+    /* Header Styles */
+    .content-header {
+        
+        background-color: var(--white);
+        border-bottom: 1px solid var(--border-color);
+        padding: 20px 30px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        
+    }
+
+    .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+        .header-content h1 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+    .header-tabs {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+        border: none;
+        
+        color: var(--text-dark);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        background: var(--light-bg);
+    
+    }
+
+        .tab-button.active, .tab-button:hover {
+            
+            box-shadow: 0 2px 8px rgba(37, 87, 167, 0.3);
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+    /* Updated Search Bar Styles */
+    .search-container {
+        background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px); /* Glass effect */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.5); /* Inner glow */
+        padding: 15px 25px;
+        margin: 20px 30px;
+        border-radius: 12px; /* More rounded corners */
+    }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(to right, white 90%, #f0f7ff 100%); /* Subtle blue fade */
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+        .search-bar:focus-within {
+            border-color: rgba(37, 87, 167, 0.3);
+            box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+    .search-icon {
+        padding: 0 15px;
+        color: var(--text-muted);
+        font-size: 16px;
+        opacity: 0.7;
+    }
+
+    .search-bar input {
+        flex: 1;
+        padding: 14px 10px;
+        border: none;
+        outline: none;
+        font-size: 15px;
+        background: transparent;
+        color: var(--text-dark);
+    }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+    .search-btn {
+        padding: 0 25px;
+        height: 46px;
+        border: none;
+        font-weight: 500;
+        font-size: 15px;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, var(--secondary-blue), #153a6d);
+            transform: translateY(-1px);
+        }
+
+    .advanced-search-toggle {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 10px;
+        color: var(--accent-color);
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+        padding: 5px 0;
+    }
+
+        .advanced-search-toggle i {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .advanced-search-toggle:hover {
+            text-decoration: underline;
+        }
+
+    .advanced-search {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--medium-gray);
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .filter-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .filter-group {
+        flex: 1;
+    }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+    .filter-select, .filter-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        font-size: 14px;
+        transition: var(--transition);
+        background-color: white;
+    }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(37, 87, 167, 0.2);
+        }
+
+    /* Listings Container */
+    .listings-container {
+        padding: 0 30px 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .results-header h3 {
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+    .sort-options {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .sort-options label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+    .sort-select {
+        padding: 8px 12px;
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        font-size: 14px;
+        background-color: white;
+    }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+    /* Listings Grid */
+    .listings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    /* Listing Card */
+    .listing-card {
+       
+        border-radius: var(--border-radius);
+        padding: 20px;
+        
+        cursor: pointer;
+        transition: var(--transition);
+        transition: all 0.2s ease;
+        transform: translateY(0);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: var(--white);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+        .listing-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+    .card-header {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .card-title {
+        flex: 1;
+    }
+
+        .card-title h3 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+    .company {
+        margin: 5px 0;
+        font-size: 14px;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+    }
+
+        .company a {
+            color: var(--accent-color);
+            transition: var(--transition);
+        }
+
+            .company a:hover {
+                text-decoration: underline;
+            }
+
+    .verified-badge {
+        margin-left: 5px;
+        color: var(--success-color);
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .verified-badge i {
+            margin-right: 0;
+        }
+
+    .card-actions {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .save-button {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 18px;
+        padding: 5px;
+        transition: var(--transition);
+    }
+
+        .save-button:hover, .save-button .fa-bookmark {
+            color: var(--accent-color);
+        }
+
+    .card-body {
+        margin: 10px 0;
+        flex: 1;
+    }
+
+    .card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .location, .salary, .type {
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        color: var(--text-dark);
+    }
+
+        .location i, .salary i, .type i {
+            margin-right: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+    .salary {
+        color: var(--success-color);
+        font-weight: 500;
+    }
+
+    .card-description {
+        font-size: 14px;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .tag {
+        background-color: rgba(37, 87, 167, 0.1);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .tag-more {
+        color: var(--text-muted);
+        font-size: 12px;
+        align-self: center;
+    }
+
+    .card-footer {
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid var(--medium-gray);
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .posted-date {
+        display: flex;
+        align-items: center;
+    }
+
+        .posted-date i {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+    .urgent-badge {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--danger-color);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+
+        .urgent-badge i {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+    /* No Results */
+    .no-results {
+        text-align: center;
+        padding: 50px 20px;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        border: 1px solid var(--medium-gray);
+        grid-column: 1 / -1;
+    }
+
+        .no-results i {
+            font-size: 50px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .no-results h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .no-results p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    .reset-filters {
+        padding: 10px 20px;
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+    }
+
+        .reset-filters:hover {
+            background: var(--accent-hover);
+        }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 30px;
+        grid-column: 1 / -1;
+    }
+
+    .page-button {
+        padding: 8px 15px;
+        background: white;
+        border: 1px solid var(--medium-gray);
+        color: var(--text-dark);
+        border-radius: var(--border-radius);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+    }
+
+        .page-button:hover:not(.disabled) {
+            background: var(--light-gray);
+        }
+
+        .page-button.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .page-button.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+    /* Detail View */
+    .detail-view {
+        background: #f5f7fa;
+        padding: 20px 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .back-button {
+        padding: 8px 15px;
+        background: white;
+        color: var(--text-dark);
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        margin-bottom: 20px;
+        display: inline-flex;
+        align-items: center;
+        font-size: 14px;
+    }
+
+        .back-button:hover {
+            background: var(--light-gray);
+        }
+
+    .detail-content {
+        
+        border-radius: var(--border-radius);
+        padding: 30px;
+        box-shadow: var(--box-shadow);
+        background: var(--white);
+        border: 1px solid var(--border-color);
+    }
+
+    .detail-header {
+        display: flex;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--medium-gray);
+        flex-wrap: wrap;
+    }
+
+    .detail-title {
+        flex: 1;
+        min-width: 300px;
+    }
+
+        .detail-title h2 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+    .company-link {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+        .company-link a {
+            color: var(--accent-color);
+            font-size: 18px;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+    .detail-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 15px;
+    }
+
+        .detail-meta span {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+            .detail-meta span i {
+                margin-right: 5px;
+                color: var(--text-muted);
+                font-size: 14px;
+            }
+
+    .detail-actions-top {
+        display: flex;
+        gap: 15px;
+        align-self: flex-start;
+        margin-top: 10px;
+    }
+
+    .apply-button {
+        padding: 10px 20px;
+        
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        background: var(--primary-blue);
+    }
+
+        .apply-button:hover {
+            background: var(--accent-hover);
+        }
+
+    /* Detail Sections */
+    .detail-sections {
+        display: grid;
+        gap: 30px;
+    }
+
+    .detail-section {
+        background: white;
+        padding: 0;
+    }
+
+        .detail-section h3 {
+            margin: 0 0 15px 0;
+            color: var(--primary-color);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+            .detail-section h3 i {
+                color: var(--accent-color);
+                font-size: 18px;
+            }
+
+    .description {
+        line-height: 1.8;
+        color: var(--text-dark);
+        font-size: 15px;
+    }
+
+    .responsibilities-list, .requirements-list {
+        margin-left: 20px;
+        color: var(--text-dark);
+    }
+
+        .responsibilities-list li, .requirements-list li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+
+            .responsibilities-list li:before, .requirements-list li:before {
+                content: "•";
+                color: var(--accent-color);
+                font-weight: bold;
+                position: absolute;
+                left: 0;
+            }
+
+    .location-details {
+        line-height: 1.8;
+        color: var(--text-dark);
+    }
+
+        .location-details p {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+            .location-details p i {
+                margin-right: 10px;
+                color: var(--text-muted);
+                width: 20px;
+                text-align: center;
+            }
+
+    .map-preview {
+        margin-top: 15px;
+    }
+
+    .view-map {
+        display: inline-flex;
+        align-items: center;
+        color: var(--accent-color);
+        font-size: 14px;
+    }
+
+        .view-map:hover {
+            text-decoration: underline;
+        }
+
+        .view-map i {
+            margin-right: 5px;
+        }
+
+    /* Details Grid */
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .detail-item {
+        display: flex;
+        font-size: 14px;
+    }
+
+    .detail-label {
+        font-weight: 500;
+        min-width: 120px;
+        color: var(--text-dark);
+    }
+
+    .detail-value {
+        color: var(--text-dark);
+    }
+
+    /* Company Info */
+    .company-info {
+        background: var(--light-gray);
+        padding: 20px;
+        border-radius: var(--border-radius);
+    }
+
+    .company-description {
+        margin-bottom: 15px;
+        line-height: 1.7;
+        font-size: 14px;
+    }
+
+    .company-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        font-size: 13px;
+        color: var(--text-dark);
+    }
+
+        .company-stats span {
+            display: flex;
+            align-items: center;
+        }
+
+            .company-stats span i {
+                margin-right: 5px;
+                color: var(--text-muted);
+                font-size: 12px;
+            }
+
+            .company-stats span a {
+                color: var(--accent-color);
+            }
+
+                .company-stats span a:hover {
+                    text-decoration: underline;
+                }
+
+    /* Detail Actions */
+    .detail-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--medium-gray);
+        flex-wrap: wrap;
+    }
+
+    .save-button, .share-button, .report-button {
+        padding: 10px 20px;
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 14px;
+        border: 1px solid var(--medium-gray);
+    }
+
+    .save-button {
+        background: white;
+        color: var(--accent-color);
+    }
+
+        .save-button:hover {
+            background: rgba(37, 87, 167, 0.1);
+        }
+
+    .share-button {
+        background: white;
+        color: var(--text-dark);
+    }
+
+        .share-button:hover {
+            background: var(--light-gray);
+        }
+
+    .report-button {
+        background: white;
+        color: var(--danger-color);
+    }
+
+        .report-button:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+    /* Application Form */
+    .application-form {
+        background: #f5f7fa;
+        padding: 20px 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .form-container {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 30px;
+        box-shadow: var(--box-shadow);
+        border: 1px solid var(--medium-gray);
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .form-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+
+    .company-name {
+        color: var(--text-muted);
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .application-steps {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        position: relative;
+    }
+
+        .application-steps:before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--medium-gray);
+            z-index: 1;
+        }
+
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+        padding: 0 30px;
+    }
+
+        .step.active .step-number {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .step.active .step-title {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid var(--medium-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .step-title {
+        font-size: 13px;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    /* Form Sections */
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--medium-gray);
+    }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+    .section-title {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        font-weight: 600;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+    }
+
+        .section-title i {
+            color: var(--accent-color);
+            font-size: 16px;
+        }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 15px;
+    }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+    .form-input, .form-select, .form-textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        font-size: 15px;
+        transition: var(--transition);
+    }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(37, 87, 167, 0.2);
+        }
+
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .hint {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    /* File Upload */
+    .file-upload {
+        position: relative;
+        margin-bottom: 5px;
+    }
+
+    .form-file {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .upload-preview {
+        padding: 20px;
+        border: 2px dashed var(--medium-gray);
+        border-radius: var(--border-radius);
+        text-align: center;
+        color: var(--text-muted);
+        transition: var(--transition);
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .upload-preview i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .upload-preview span {
+            margin-bottom: 5px;
+        }
+
+    .file-info {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--medium-gray);
+    }
+
+    .cancel-button {
+        padding: 10px 20px;
+        background: white;
+        color: var(--text-dark);
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        font-weight: 500;
+    }
+
+        .cancel-button:hover {
+            background: var(--light-gray);
+        }
+
+    .submit-button {
+        padding: 10px 20px;
+        background: var(--success-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+    }
+
+        .submit-button:hover {
+            background: #218838;
+        }
+
+    /* Validation Styles */
+    .validation-errors {
+        color: var(--danger-color);
+        font-size: 14px;
+        margin-top: 20px;
+    }
+
+    .field-validation-error {
+        color: var(--danger-color);
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .input-validation-error {
+        border-color: var(--danger-color) !important;
+    }
+
+        .input-validation-error:focus {
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25) !important;
+        }
+
+    /* Responsive Styles */
+    @@media (max-width: 1200px) {
+        .sidebar {
+            width: 250px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+        }
+    }
+
+    @@media (max-width: 992px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        .search-container, .listings-container, .detail-view, .application-form {
+            margin-left: 15px;
+            margin-right: 15px;
+            padding: 15px;
+        }
+
+        .detail-header {
+            flex-direction: column;
+        }
+
+        .detail-actions-top {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .detail-meta {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .listings-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .results-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .search-bar input {
+            min-width: auto;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .header-tabs {
+            flex-direction: column;
+        }
+
+        .tab-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .advanced-search .filter-row {
+            flex-direction: column;
+        }
+
+        .detail-actions {
+            flex-direction: column;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .cancel-button, .submit-button {
+            width: 100%;
+        }
+    }
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    /* Utility Classes */
+    .text-muted {
+        color: var(--text-muted);
+    }
+
+    .text-success {
+        color: var(--success-color);
+    }
+
+    .text-danger {
+        color: var(--danger-color);
+    }
+
+    .text-warning {
+        color: var(--warning-color);
+    }
+
+    .text-info {
+        color: var(--info-color);
+    }
+
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+
+    .mt-3 {
+        margin-top: 1rem;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+</style>

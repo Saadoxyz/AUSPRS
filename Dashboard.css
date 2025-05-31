@@ -1,0 +1,258 @@
+﻿/* Site.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+html, body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+.sidebar {
+    background-color: #0f1923;
+    color: white;
+    width: 270px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    transition: width 0.3s ease-in-out;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+    .sidebar.collapsed {
+        width: 80px;
+    }
+
+    .sidebar .nav-item {
+        font-size: 0.9rem;
+        padding: 0.7rem 1rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s;
+    }
+
+        .sidebar .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .sidebar .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 3px solid #1b6ec2;
+        }
+
+        .sidebar .nav-item .nav-link {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0;
+        }
+
+    .sidebar .oi {
+        width: 2rem;
+        font-size: 1.1rem;
+        vertical-align: middle;
+        top: -1px;
+    }
+
+main {
+    flex: 1;
+    background-color: #f7f9fc;
+    min-height: 100vh;
+}
+
+.nav-profile {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    gap: 15px;
+    transition: all 0.3s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-name {
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: opacity 0.2s;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.top-row {
+    background-color: #ffffff;
+    border-bottom: 1px solid #d6d5d5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+    position: sticky;
+    top: 0;
+    z-index: 990;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.top-menu {
+    display: flex;
+    gap: 20px;
+}
+
+.menu-item {
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+    .menu-item:hover {
+        border-bottom: 2px solid #1b6ec2;
+        color: #1b6ec2;
+    }
+
+.content {
+    padding: 1.5rem;
+}
+
+/* Dashboard specific styles */
+.dashboard-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+    .dashboard-title h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .dashboard-title .icon {
+        margin-left: 1rem;
+        font-size: 2.2rem;
+    }
+
+.performance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.skill-title {
+    font-size: 1.8rem;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.book-icon {
+    width: 30px;
+}
+
+.clock-icon {
+    width: 80px;
+    margin-left: auto;
+}
+
+.gauge-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    position: relative;
+}
+
+.gauge-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+}
+
+.gauge-value {
+    position: absolute;
+    top: 50%;
+    right: 20%;
+    transform: translateY(-50%);
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.chart-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    height: 400px;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* Colors for gauge legend */
+.below-par {
+    background-color: #ff6b6b;
+}
+
+.bad {
+    background-color: #ffa36b;
+}
+
+.normal {
+    background-color: #ffd56b;
+}
+
+.good {
+    background-color: #6bccff;
+}
+
+.exceptional {
+    background-color: #6bff9e;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+    }
+
+        .sidebar.expanded {
+            width: 270px;
+        }
+
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+}

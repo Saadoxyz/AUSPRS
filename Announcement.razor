@@ -1,0 +1,293 @@
+﻿@page "/announcements"
+
+<style>
+    :root {
+        --primary-color: #031528;
+        --secondary-color: #0d3c84;
+        --accent-color: #4a90e2;
+        --light-gray: #f5f7fa;
+        --dark-gray: #6c757d;
+        --white: #ffffff;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background-color: var(--light-gray);
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .header {
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 15px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: var(--box-shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .logo img {
+            height: 50px;
+            filter: brightness(0) invert(1);
+        }
+
+    .logo-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+        .logo-text h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .logo-text span {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+    .nav {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+    }
+
+        .nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.9rem;
+            position: relative;
+            padding: 8px 0;
+            transition: var(--transition);
+        }
+
+            .nav a:hover {
+                color: var(--accent-color);
+            }
+
+            .nav a::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background-color: var(--accent-color);
+                transition: var(--transition);
+            }
+
+            .nav a:hover::after {
+                width: 100%;
+            }
+
+    .apply-button {
+        padding: 8px 20px;
+        background-color: transparent;
+        color: var(--white);
+        border-radius: 20px;
+        font-size: 0.9rem;
+        border: 1px solid var(--white);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+        .apply-button:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+    .container {
+        padding: 40px;
+        display: flex;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .box {
+        background-color: var(--white);
+        padding: 30px;
+        flex: 1;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+    }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .box h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+    .notification-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: rgba(74, 144, 226, 0.05);
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+    }
+
+        .notification-row:hover {
+            background-color: rgba(74, 144, 226, 0.1);
+            transform: translateX(5px);
+        }
+
+        .notification-row span:first-child {
+            flex: 1;
+            margin-right: 15px;
+        }
+
+        .notification-row span:last-child {
+            color: var(--dark-gray);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+    .bold {
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin: 20px 0 5px 0;
+        font-size: 1.1rem;
+    }
+
+    .announcement-item {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .announcement-date {
+        color: var(--dark-gray);
+        font-size: 0.8rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 992px) {
+        .container
+
+    {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .header {
+        padding: 15px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav {
+        margin-top: 15px;
+        width: 100%;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    }
+
+    @@media (max-width: 576px) {
+        .notification-row
+
+    {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .notification-row span:last-child {
+        margin-top: 5px;
+        align-self: flex-end;
+    }
+
+    }
+</style>
+
+<div class="header">
+    <div class="logo">
+        <img src="/images/logo.png" alt="AU Logo">
+        <div class="logo-text">
+            <h2>Air University Student Portal</h2>
+            <span>Registration System</span>
+        </div>
+    </div>
+    <div class="nav">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Programs</a>
+        <a href="#">Administration</a>
+        <a href="#">Contact</a>
+        <a href="#">FAQs</a>
+        <button class="apply-button">Apply Now</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="box">
+        <h2>Notifications</h2>
+        <div class="notification-row">
+            <span>Your transcript is now available</span>
+            <span>2 minutes ago</span>
+        </div>
+        <div class="notification-row">
+            <span>A new grade has been posted for your course</span>
+            <span>12 hours ago</span>
+        </div>
+        <div class="notification-row">
+            <span>Registration for Fall 2025 begins next week</span>
+            <span>1 week ago</span>
+        </div>
+        <div class="notification-row">
+            <span>Library hours extended for finals week</span>
+            <span>2 weeks ago</span>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>Announcements</h2>
+        <div class="announcement-item">
+            <p class="bold">Course Enrollment Deadline</p>
+            <p>The deadline to enroll for the courses in Spring 2025 is February 27. Please ensure you have registered before this date.</p>
+            <span class="announcement-date">Posted: January 15, 2025</span>
+        </div>
+        <div class="announcement-item">
+            <p class="bold">Updated Campus Policies</p>
+            <p>Please review the updated campus policies regarding health and safety protocols for the upcoming semester.</p>
+            <span class="announcement-date">Posted: January 10, 2025</span>
+        </div>
+        <div class="announcement-item">
+            <p class="bold">Scholarship Applications Open</p>
+            <p>Applications for merit-based scholarships are now being accepted until March 1st.</p>
+            <span class="announcement-date">Posted: January 5, 2025</span>
+        </div>
+    </div>
+</div>

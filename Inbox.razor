@@ -1,0 +1,392 @@
+﻿@page "/inbox"
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f9f9f9;
+    }
+
+    .layout {
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 220px;
+        background-color: #0d1b2a;
+        color: white;
+        padding: 0 10px;
+        flex-shrink: 0;
+        overflow-y: auto;
+    }
+
+        .sidebar h3 {
+            font-size: 18px;
+            text-align: center;
+            margin: 0;
+            padding: 15px 0;
+            background-color: #0d1b2a;
+            border-radius: 8px 0 0 0;
+        }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+        .nav-link img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .nav-link:hover {
+            background-color: #1a2c3a;
+        }
+
+    .main-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .topbar {
+        background-color: #0d3c84;
+        color: white;
+        padding: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 0 8px 0 0;
+        margin-bottom: 0;
+    }
+
+    .message-container {
+        display: flex;
+        padding: 20px;
+        gap: 20px;
+        height: calc(100vh - 60px);
+    }
+
+    .message-list {
+        width: 250px;
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 12px;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .message-box {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 25px;
+        flex-grow: 1;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .message-card {
+        background-color: #e0e0f8;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .message-card:hover {
+            background-color: #d0d0f0;
+        }
+
+        .message-card.selected {
+            background-color: #c0c0e8;
+            border-left: 4px solid #0d3c84;
+        }
+
+    .message-header {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .message-date {
+        font-size: 13px;
+        color: #444;
+    }
+
+    .message-detail-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .message-detail-meta {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    .message-detail-content {
+        font-size: 16px;
+        color: #000;
+        margin-top: 10px;
+        flex-grow: 1;
+    }
+
+    .compose-area {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .compose-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .compose-textarea {
+        width: 100%;
+        height: 120px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+    }
+
+    .compose-button {
+        background-color: #0d3c84;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+        .compose-button:hover {
+            background-color: #0c2e6a;
+        }
+
+    .empty-message {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: #888;
+        font-size: 18px;
+    }
+
+    .message-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .action-button {
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .delete-button {
+        background-color: #ff4444;
+        color: white;
+        border: none;
+    }
+
+        .delete-button:hover {
+            background-color: #cc0000;
+        }
+
+    .reply-button {
+        background-color: #0d3c84;
+        color: white;
+        border: none;
+    }
+
+        .reply-button:hover {
+            background-color: #0c2e6a;
+        }
+</style>
+
+<div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3><img src="https://img.icons8.com/ios-filled/24/ffffff/student-male.png" /> Student Portal</h3>
+        <a class="nav-link" href="#"><img src="https://img.icons8.com/ios-filled/24/ffffff/home.png" /> Home</a>
+        <a class="nav-link" href="#"><img src="https://img.icons8.com/ios-filled/24/ffffff/checklist.png" /> Attendance</a>
+        <a class="nav-link" href="#"><img src="https://img.icons8.com/ios-filled/24/ffffff/books.png" /> Courses</a>
+        <a class="nav-link" href="#"><img src="https://img.icons8.com/ios-filled/24/ffffff/feedback.png" /> Feedback</a>
+        <a class="nav-link" href="#"><img src="https://img.icons8.com/ios-filled/24/ffffff/filled-message.png" /> Inbox</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">Inbox</div>
+
+        <div class="message-container">
+            <!-- Message List -->
+            <div class="message-list">
+                @foreach (var message in messages)
+                {
+                    <div class="message-card @(selectedMessage?.Id == message.Id ? "selected" : "")" 
+                         @onclick="() => SelectMessage(message)">
+                        <div class="message-header">@message.Sender</div>
+                        <div class="message-date">@message.Subject<br />@message.Date.ToString("dd-MMM-yyyy")</div>
+                    </div>
+                }
+            </div>
+
+            <!-- Message Detail -->
+            <div class="message-box">
+                @if (selectedMessage != null)
+                {
+                    <div class="message-detail-title">@selectedMessage.Subject</div>
+                    <div class="message-detail-meta">From: @selectedMessage.Sender</div>
+                    <div class="message-detail-meta">Date: @selectedMessage.Date.ToString("dd-MMM-yyyy")</div>
+                    <div class="message-detail-content">
+                        @selectedMessage.Content
+                    </div>
+                    
+                    <div class="message-actions">
+                        <button class="action-button delete-button" @onclick="DeleteMessage">Delete</button>
+                        <button class="action-button reply-button" @onclick="StartReply">Reply</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-message">
+                        Select a message to view
+                    </div>
+                }
+
+                @if (isComposing)
+                {
+                    <div class="compose-area">
+                        <input class="compose-input" placeholder="To" @bind="newMessage.Recipient" />
+                        <input class="compose-input" placeholder="Subject" @bind="newMessage.Subject" />
+                        <textarea class="compose-textarea" placeholder="Your message" @bind="newMessage.Content"></textarea>
+                        <button class="compose-button" @onclick="SendMessage">Send</button>
+                        <button class="compose-button" @onclick="CancelCompose" style="background-color: #666; margin-left: 10px;">Cancel</button>
+                    </div>
+                }
+                else if (!isComposing && selectedMessage == null)
+                {
+                    <div class="compose-area">
+                        <button class="compose-button" @onclick="StartNewMessage">Compose New Message</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Message> messages = new List<Message>
+    {
+        new Message { Id = 1, Sender = "Admin", Subject = "Fee Due Reminder", 
+                     Content = "This is a reminder that your semester fee is due by May 30, 2025. Please make the payment at your earliest convenience to avoid late fees.", 
+                     Date = new DateTime(2025, 5, 18) },
+        new Message { Id = 2, Sender = "Instructor", Subject = "Assignment Grading", 
+                     Content = "Your assignment has been graded. You scored A in CSC-301. Great Job!", 
+                     Date = new DateTime(2025, 5, 5) },
+        new Message { Id = 3, Sender = "System", Subject = "Registration done", 
+                     Content = "Your course registration for Spring 2025 semester has been completed successfully.", 
+                     Date = new DateTime(2025, 4, 29) },
+        new Message { Id = 4, Sender = "Library", Subject = "Book Due Reminder", 
+                     Content = "The book 'Introduction to Algorithms' is due for return on June 5, 2025. Please return or renew it to avoid fines.", 
+                     Date = new DateTime(2025, 5, 22) },
+        new Message { Id = 5, Sender = "Career Center", Subject = "Internship Opportunity", 
+                     Content = "We have an internship opportunity with TechSolutions Inc. that matches your profile. Deadline to apply is June 15, 2025.", 
+                     Date = new DateTime(2025, 5, 20) }
+    };
+
+    private Message selectedMessage;
+    private bool isComposing = false;
+    private Message newMessage = new Message();
+
+    private class Message
+    {
+        public int Id { get; set; }
+        public string Sender { get; set; }
+        public string Recipient { get; set; }
+        public string Subject { get; set; }
+        public string Content { get; set; }
+        public DateTime Date { get; set; }
+    }
+
+    private void SelectMessage(Message message)
+    {
+        selectedMessage = message;
+        isComposing = false;
+    }
+
+    private void StartNewMessage()
+    {
+        isComposing = true;
+        selectedMessage = null;
+        newMessage = new Message();
+    }
+
+    private void StartReply()
+    {
+        isComposing = true;
+        newMessage = new Message
+        {
+            Recipient = selectedMessage.Sender,
+            Subject = "Re: " + selectedMessage.Subject
+        };
+    }
+
+    private void SendMessage()
+    {
+        // In a real app, this would send to a server
+        var sentMessage = new Message
+        {
+            Id = messages.Count + 1,
+            Sender = "Me",
+            Recipient = newMessage.Recipient,
+            Subject = newMessage.Subject,
+            Content = newMessage.Content,
+            Date = DateTime.Now
+        };
+        
+        messages.Insert(0, sentMessage);
+        selectedMessage = sentMessage;
+        isComposing = false;
+        newMessage = new Message();
+    }
+
+    private void CancelCompose()
+    {
+        isComposing = false;
+        newMessage = new Message();
+    }
+
+    private void DeleteMessage()
+    {
+        if (selectedMessage != null)
+        {
+            messages.Remove(selectedMessage);
+            selectedMessage = null;
+        }
+    }
+}

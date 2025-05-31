@@ -1,0 +1,197 @@
+﻿/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+body {
+    background-color: #f5f9ff;
+    color: #1a1a1a;
+    padding: 20px;
+}
+
+/* Navbar */
+.navbar {
+    background: #002147;
+    color: white;
+    padding: 16px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 33, 71, 0.3);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.navbar-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 1.2;
+    max-width: 300px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 16px;
+    flex-grow: 1;
+    justify-content: center;
+    margin-left: 30px;
+}
+
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+    .nav-link:hover {
+        background-color: #004080;
+    }
+
+/* PDF Button */
+.apply-btn {
+    background-color: #ffffff;
+    color: #002147;
+    font-weight: 600;
+    padding: 10px 16px;
+    border: 2px solid #002147;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .apply-btn:hover {
+        background-color: #e6f0ff;
+        border-color: #004080;
+    }
+
+/* Header with background */
+.header-with-bg {
+    background-image: url('https://image.shutterstock.com/image-photo/book-open-pages-close-up-600nw-2467818435.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 280px;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 40px 0;
+}
+
+    .header-with-bg .overlay {
+        background: rgba(0, 33, 71, 0.65);
+        color: white;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+    }
+
+    .header-with-bg h1 {
+        font-size: 2.4rem;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+/* Content */
+.content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 33, 71, 0.1);
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+    .section h2 {
+        color: #002147;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .section p,
+    .section ul {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .section ul {
+        padding-left: 20px;
+        list-style: disc;
+    }
+
+/* Note and highlight boxes */
+.note-box {
+    background-color: #e6f0ff;
+    color: #003366;
+    padding: 16px;
+    border-left: 5px solid #004080;
+    margin-bottom: 24px;
+    border-radius: 6px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.highlight-box {
+    background-color: #f2f8ff;
+    border-left: 5px solid #00509e;
+    padding: 16px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+/* Email styling */
+a[href^="mailto:"] {
+    color: #004aad;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+    a[href^="mailto:"]:hover {
+        text-decoration: underline;
+    }
+
+@keyframes quickFadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+        filter: brightness(80%);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(0) scale(1.02);
+        filter: brightness(100%);
+    }
+
+    80% {
+        opacity: 1;
+        transform: translateY(0) scale(1.02);
+        filter: brightness(100%);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+        filter: brightness(80%);
+    }
+}
+
+.animated-text {
+    animation: quickFadeInOut 2.5s ease-in-out infinite;
+    transition: all 0.3s ease-in-out;
+}

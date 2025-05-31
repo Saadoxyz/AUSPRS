@@ -1,0 +1,313 @@
+﻿@page "/Program"
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<head>
+    <link href="css/Component.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap logo-icon"></i>
+            <span>Student<br />Dashboard</span>
+        </div>
+        <nav>
+            <a class="nav-link" href="/">
+                <i class="fas fa-home"></i>
+                <span>Home Page</span>
+            </a>
+            <a class="nav-link active" href="/dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Student Dashboard</span>
+            </a>
+            <a class="nav-link" href="/leaveattendance">
+                <i class="fas fa-calendar-check"></i>
+                <span>Attendance and Leave</span>
+            </a>
+            <a class="nav-link" href="/courses">
+                <i class="fas fa-id-card"></i>
+                <span>Registration</span>
+            </a>
+            <a class="nav-link" href="/courseregistration">
+                <i class="fas fa-book"></i>
+                <span>Course registration</span>
+            </a>
+            <a class="nav-link" href="/jobs-internships">
+                <i class="fas fa-briefcase"></i>
+                <span>Internships and Jobs</span>
+            </a>
+            <a class="nav-link" href="/Seip">
+                <i class="fas fa-list-alt"></i>
+                <span>Programs Offered</span>
+            </a>
+            <a class="nav-link" href="/announcements">
+                <i class="fas fa-bullhorn"></i>
+                <span>Announcements</span>
+            </a>
+            <a class="nav-link" href="/feedback">
+                <i class="fas fa-comment-dots"></i>
+                <span>Feedback and complaint</span>
+            </a>
+            <a class="nav-link" href="/clubs">
+                <i class="fas fa-users"></i>
+                <span>Societies and Clubs</span>
+            </a>
+            <a class="nav-link" href="/inbox">
+                <i class="fas fa-inbox"></i>
+                <span>Inbox</span>
+                <span class="notification-badge">3</span>
+            </a>
+            <a class="nav-link" href="/chat">
+                <i class="fas fa-robot"></i>
+                <span>Chat AI</span>
+            </a>
+            <a class="nav-link logout" href="/">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="profile-pic" />
+                <div class="profile-info">
+                    <span class="username">Mustafa Ahmed</span>
+                    <span class="user-role">Computer Science</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <section class="welcome-banner">
+            <div class="welcome-text">
+                <h2>Welcome Back, <span class="username">Mustafa</span>!</h2>
+                <p class="subtitle">Always stay updated in your student portal</p>
+                <div class="date-info">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>@DateTime.Now.ToString("dddd, MMMM dd, yyyy")</span>
+                </div>
+            </div>
+            <div class="cap-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon bg-blue">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Current Courses</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-green">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">3.8</span>
+                    <span class="stat-label">Current GPA</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-orange">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">92%</span>
+                    <span class="stat-label">Attendance</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-purple">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">New Notifications</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="chart-section">
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h4><i class="fas fa-chart-line"></i> Academic Progress</h4>
+                    <div class="chart-legend">
+                        <span><i class="fas fa-square" style="color: #FF6B6B;"></i> Current</span>
+                        <span><i class="fas fa-square" style="color: #4ECDC4;"></i> Target</span>
+                    </div>
+                </div>
+                <div class="bar-chart">
+                    <div class="bar-container">
+                        <div class="bar low" style="--bar-height:30%;">
+                            <div class="bar-fill" style="background-color: #FF6B6B; animation: growBar 1.5s ease-out infinite alternate;"></div>
+                            <div class="bar-target" style="height: 50%; background-color: #4ECDC4;"></div>
+                            <span class="bar-label">Sem 1</span>
+                        </div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar average" style="--bar-height:60%;">
+                            <div class="bar-fill" style="background-color: #FF6B6B; animation: growBar 1.5s ease-out 0.2s infinite alternate;"></div>
+                            <div class="bar-target" style="height: 70%; background-color: #4ECDC4;"></div>
+                            <span class="bar-label">Sem 2</span>
+                        </div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar high" style="--bar-height:90%;">
+                            <div class="bar-fill" style="background-color: #FF6B6B; animation: growBar 1.5s ease-out 0.4s infinite alternate;"></div>
+                            <div class="bar-target" style="height: 85%; background-color: #4ECDC4;"></div>
+                            <span class="bar-label">Sem 3</span>
+                        </div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="--bar-height:75%;">
+                            <div class="bar-fill" style="background-color: #FF6B6B; animation: growBar 1.5s ease-out 0.6s infinite alternate;"></div>
+                            <div class="bar-target" style="height: 80%; background-color: #4ECDC4;"></div>
+                            <span class="bar-label">Sem 4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <div class="chart-header">
+                    <h4><i class="fas fa-university"></i> University GPA Trend</h4>
+                    <select class="chart-filter">
+                        <option>Last 6 Months</option>
+                        <option>Last Year</option>
+                        <option>All Time</option>
+                    </select>
+                </div>
+
+                <div class="graph-wrapper">
+                    <div class="y-axis">
+                        <span>4.0</span>
+                        <span>3.5</span>
+                        <span>3.0</span>
+                        <span>2.5</span>
+                        <span>2.0</span>
+                    </div>
+
+                    <div class="graph-area">
+                        <svg class="line-chart" viewBox="0 0 300 100" preserveAspectRatio="none">
+                            <!-- Grid lines -->
+                            <line x1="0" y1="10" x2="300" y2="10" stroke="#ddd" stroke-width="1" />
+                            <line x1="0" y1="30" x2="300" y2="30" stroke="#ddd" stroke-width="1" />
+                            <line x1="0" y1="50" x2="300" y2="50" stroke="#ddd" stroke-width="1" />
+                            <line x1="0" y1="70" x2="300" y2="70" stroke="#ddd" stroke-width="1" />
+                            <line x1="0" y1="90" x2="300" y2="90" stroke="#ddd" stroke-width="1" />
+
+                            <!-- Animated zigzag line with SMIL -->
+                            <polyline id="animatedZigzag"
+                                      fill="none"
+                                      stroke="#FF6B6B"
+                                      stroke-width="3"
+                                      points="10,70 70,60 130,50 190,40 250,30">
+                                <animate attributeName="stroke-dashoffset"
+                                         values="1000;0"
+                                         dur="3s"
+                                         repeatCount="indefinite"
+                                         keyTimes="0;1"
+                                         calcMode="spline"
+                                         keySplines="0.42,0,0.58,1" />
+                            </polyline>
+
+                            <!-- Animated target line with SMIL -->
+                            <polyline class="target-line"
+                                      fill="none"
+                                      stroke="#4ECDC4"
+                                      stroke-width="2"
+                                      stroke-dasharray="5,5"
+                                      points="10,50 70,50 130,45 190,35 250,25">
+                                <animate attributeName="stroke-dashoffset"
+                                         values="1000;0"
+                                         dur="3s"
+                                         begin="0.5s"
+                                         repeatCount="indefinite"
+                                         keyTimes="0;1"
+                                         calcMode="spline"
+                                         keySplines="0.42,0,0.58,1" />
+                            </polyline>
+
+                            <!-- Animated dots with SMIL -->
+                            <circle cx="10" cy="70" r="6" fill="#FF6B6B">
+                                <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" />
+                                <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" />
+                            </circle>
+                            <circle cx="70" cy="60" r="6" fill="#FF6B6B">
+                                <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" begin="0.3s" />
+                                <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" begin="0.3s" />
+                            </circle>
+                            <circle cx="130" cy="50" r="6" fill="#FF6B6B">
+                                <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" begin="0.6s" />
+                                <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" begin="0.6s" />
+                            </circle>
+                            <circle cx="190" cy="40" r="6" fill="#FF6B6B">
+                                <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" begin="0.9s" />
+                                <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" begin="0.9s" />
+                            </circle>
+                            <circle cx="250" cy="30" r="6" fill="#FF6B6B">
+                                <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" begin="1.2s" />
+                                <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" begin="1.2s" />
+                            </circle>
+                        </svg>
+
+                        <div class="x-axis-labels">
+                            <span>Oct</span>
+                            <span>Nov</span>
+                            <span>Dec</span>
+                            <span>Jan</span>
+                            <span>Feb</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-actions">
+            <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+            <div class="actions-grid">
+                <div class="action-card" onclick="location.href='/courses'">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Register for Courses</span>
+                </div>
+                <div class="action-card" onclick="location.href='/feedback'">
+                    <i class="fas fa-comment-medical"></i>
+                    <span>Submit Feedback</span>
+                </div>
+                <div class="action-card" onclick="location.href='/attendance'">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Request Leave</span>
+                </div>
+                <div class="action-card" onclick="location.href='/careers'">
+                    <i class="fas fa-search"></i>
+                    <span>Job Search</span>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<script src="/Program.js"></script>
+<script src="/Dash.js"></script>
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("DashboardAnimations.animateDashboardElements");
+                await JSRuntime.InvokeVoidAsync("DashboardAnimations.initDashboardAnimations");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing animations: {ex.Message}");
+            }
+        }
+    }
+}

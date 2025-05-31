@@ -1,0 +1,191 @@
+﻿/* Reset & Base */
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #f1f3f4;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #002147;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.logo {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+    .logo span {
+        font-size: 13px;
+        font-weight: normal;
+    }
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+}
+
+    .nav-links a {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 14px;
+        padding: 5px 10px;
+        transition: background 0.3s;
+        border-radius: 4px;
+    }
+
+        .nav-links a:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+.apply-btn {
+    background-color: #1a73e8;
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+    .apply-btn:hover {
+        background-color: #1669c1;
+    }
+
+/* Email Container */
+.email-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.email-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+    /* Inputs */
+    .email-content h2 {
+        color: #002147;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+.email-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Rich Editor */
+.email-editor {
+    min-height: 220px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+/* Toolbar Section */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* Send Button Group */
+.send-section {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.send-btn {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    .send-btn:hover {
+        background-color: #1669c1;
+    }
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    color: #1a73e8;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Formatting Toolbar */
+.rich-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+    .rich-toolbar button,
+    .rich-toolbar select {
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        color: #444;
+        padding: 4px;
+    }
+
+    .rich-toolbar select {
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+/* Icon Bar */
+.icon-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+    .icon-bar i {
+        font-size: 20px;
+        color: #555;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+        .icon-bar i:hover {
+            background-color: #e8eaed;
+        }

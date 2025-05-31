@@ -1,0 +1,87 @@
+﻿body {
+    background-color: #021526;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.course-details {
+    background-color: #f5faff;
+    border: 1px solid #0a2b45;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    animation: fadeInUp 0.5s ease both;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(to bottom right, #021526, #0a2b45);
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0e0e0;
+}
+
+    .course-details:hover {
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        transform: translateY(-4px);
+    }
+
+    .course-details dt {
+        font-weight: 600;
+        color: #90caf9;
+    }
+
+    .course-details dd {
+        margin-bottom: 1rem;
+        color: #cfd8dc;
+    }
+
+.section-title {
+    text-align: center;
+    color: #90caf9;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+}
+
+.btn-primary {
+    background-color: #1976d2;
+    border-color: #1565c0;
+    color: #fff;
+}
+
+    .btn-primary:hover {
+        background-color: #1565c0;
+        border-color: #0d47a1;
+    }
+
+.btn-secondary {
+    background-color: #0a2b45;
+    border: 1px solid #1976d2;
+    color: #90caf9;
+}
+
+    .btn-secondary:hover {
+        background-color: #1976d2;
+        color: #fff;
+    }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

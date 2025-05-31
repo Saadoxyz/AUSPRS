@@ -1,0 +1,489 @@
+﻿@page "/leaveattendance"
+
+<style>
+    :root {
+        --primary-color: #0b1e35;
+        --secondary-color: #f5f5f5;
+        --accent-color: #3a7bd5;
+        --attendance-color: #4CAF50;
+        --leave-color: #F44336;
+        --today-color: #FFC107;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+    }
+
+    .navbar {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar-left h2 {
+        font-size: 18px;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+    
+    .navbar-right a {
+        color: white;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 400;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .navbar-right a:not(.apply-btn):hover {
+        color: rgba(255,255,255,0.8);
+    }
+    
+    .navbar-right a:not(.apply-btn):after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        background: white;
+        bottom: -5px;
+        left: 0;
+        transition: width 0.3s ease;
+    }
+    
+    .navbar-right a:not(.apply-btn):hover:after {
+        width: 100%;
+    }
+
+    .apply-btn {
+        background-color: white;
+        color: var(--primary-color);
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .apply-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .main-container {
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+        gap: 50px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .box {
+        background-color: white;
+        padding: 30px;
+        width: 450px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .box h3 {
+        margin-top: 0;
+        font-size: 22px;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        font-weight: 600;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+    }
+    
+    .calendar-container {
+        margin-bottom: 25px;
+    }
+
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        gap: 8px;
+        margin-top: 20px;
+    }
+
+    .calendar-header {
+        font-weight: 600;
+        color: var(--primary-color);
+        padding: 10px 0;
+    }
+    
+    .calendar-day {
+        padding: 12px 0;
+        margin: 0;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .calendar-day:hover {
+        background-color: rgba(11, 30, 53, 0.05);
+    }
+    
+    .calendar-day.leave-day {
+        background-color: rgba(244, 67, 54, 0.1);
+    }
+
+    .mark-icon {
+        color: var(--attendance-color);
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .leave-icon {
+        color: var(--leave-color);
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .mark-btn,
+    .submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+    }
+    
+    .mark-btn:hover,
+    .submit-btn:hover {
+        background-color: #0a1a2f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .mark-btn:active,
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .leave-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .form-group label {
+        font-weight: 500;
+        color: var(--primary-color);
+        font-size: 15px;
+    }
+
+    .leave-form select,
+    .leave-form input,
+    .leave-form textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 0;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .leave-form select:focus,
+    .leave-form input:focus,
+    .leave-form textarea:focus {
+        border-color: var(--accent-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
+    }
+    
+    .month-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .month-navigation h4 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .month-navigation button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--primary-color);
+        padding: 5px 15px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    
+    .month-navigation button:hover {
+        background-color: rgba(11, 30, 53, 0.1);
+    }
+    
+    .today {
+        background-color: var(--today-color);
+        color: #000;
+        font-weight: 600;
+    }
+    
+   
+</style>
+
+<div class="navbar">
+    <div class="navbar-left">
+        <h2>Air University Student Portal<br />Registration System</h2>
+    </div>
+    <div class="navbar-right">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Programs</a>
+        <a href="#">Administration</a>
+        <a href="#">Contact</a>
+        <a href="#">FAQs</a>
+        <a class="apply-btn" href="#">Apply Now</a>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="box">
+        <h3>Attendance Calendar</h3>
+        <div class="calendar-container">
+            <div class="month-navigation">
+                <button onclick="previousMonth()">←</button>
+                <h4 id="current-month-year">April 2024</h4>
+                <button onclick="nextMonth()">→</button>
+            </div>
+            <div class="calendar" id="calendar">
+                <!-- Calendar will be generated by JavaScript -->
+            </div>
+        </div>
+        <button class="mark-btn">Mark Today's Attendance</button>
+    </div>
+
+    <div class="box">
+        <h3>Leave Request Form</h3>
+        <div class="leave-form">
+            <div class="form-group">
+                <label for="leave-type">Leave Type</label>
+                <select id="leave-type">
+                    <option disabled selected>Select leave type</option>
+                    <option>Sick Leave</option>
+                    <option>Casual Leave</option>
+                    <option>Emergency Leave</option>
+                    <option>Academic Leave</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="from-date">From Date</label>
+                <input type="date" id="from-date" />
+            </div>
+            
+            <div class="form-group">
+                <label for="to-date">To Date</label>
+                <input type="date" id="to-date" />
+            </div>
+            
+            <div class="form-group">
+                <label for="leave-reason">Reason for Leave</label>
+                <textarea rows="4" id="leave-reason" placeholder="Please provide details about your leave"></textarea>
+            </div>
+            
+            <button class="submit-btn" onclick="submitLeaveRequest()">Submit Leave Request</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Current date tracking
+    let currentDate = new Date();
+    let markedDays = {}; // Object to store marked days (attendance/leave)
+    
+    // Initialize calendar
+    document.addEventListener('DOMContentLoaded', function() {
+        generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        
+        // Set minimum date for date inputs to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('from-date').min = today;
+        document.getElementById('to-date').min = today;
+        
+        // Load saved leave data from localStorage (or API in real app)
+        const savedLeaves = localStorage.getItem('studentLeaves');
+        if (savedLeaves) {
+            markedDays = {...markedDays, ...JSON.parse(savedLeaves)};
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        }
+    });
+    
+    function generateCalendar(year, month) {
+        const calendar = document.getElementById('calendar');
+        const monthYearDisplay = document.getElementById('current-month-year');
+        
+        // Clear previous calendar
+        calendar.innerHTML = '';
+        
+        // Set month/year display
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+                           "July", "August", "September", "October", "November", "December"];
+        monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
+        
+        // Get first day of month and total days in month
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        // Get today's date for highlighting
+        const today = new Date();
+        const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+        
+        // Add day headers
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        dayNames.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.textContent = day;
+            dayElement.classList.add('calendar-header');
+            calendar.appendChild(dayElement);
+        });
+        
+        // Add empty cells for days before the first day of the month
+        for (let i = 0; i < firstDay; i++) {
+            const emptyElement = document.createElement('div');
+            emptyElement.classList.add('calendar-day');
+            calendar.appendChild(emptyElement);
+        }
+        
+        // Add days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.textContent = day;
+            dayElement.classList.add('calendar-day');
+            
+            // Set animation delay
+            dayElement.style.setProperty('--delay', day + firstDay);
+            
+            // Format date as YYYY-MM-DD for comparison
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            
+            // Highlight today
+            if (isCurrentMonth && day === today.getDate()) {
+                dayElement.classList.add('today');
+            }
+            
+            // Mark leave days with special styling
+            if (markedDays[dateStr] === 'leave') {
+                dayElement.classList.add('leave-day');
+                dayElement.innerHTML = `${day} <span class="leave-icon">✗</span>`;
+            } else if (markedDays[dateStr] === 'attendance') {
+                dayElement.innerHTML = `${day} <span class="mark-icon">✓</span>`;
+            }
+            
+            calendar.appendChild(dayElement);
+        }
+    }
+    
+    function previousMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    }
+    
+    function nextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    }
+    
+    function submitLeaveRequest() {
+        const leaveType = document.getElementById('leave-type').value;
+        const fromDate = document.getElementById('from-date').value;
+        const toDate = document.getElementById('to-date').value;
+        const reason = document.getElementById('leave-reason').value;
+        
+        if (!leaveType || leaveType === "Select leave type" || !fromDate || !toDate || !reason) {
+            alert('Please fill all fields');
+            return;
+        }
+        
+        // Parse dates and mark all days in the range as leave
+        const startDate = new Date(fromDate);
+        const endDate = new Date(toDate);
+        
+        // Validate date range
+        if (startDate > endDate) {
+            alert('End date must be after start date');
+            return;
+        }
+        
+        // Mark each day in the range
+        const currentDate = new Date(startDate);
+        const newLeaves = {};
+        
+        while (currentDate <= endDate) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            markedDays[dateStr] = 'leave';
+            newLeaves[dateStr] = 'leave';
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        // Save to localStorage (or API in real app)
+        const savedLeaves = localStorage.getItem('studentLeaves') || '{}';
+        const allLeaves = {...JSON.parse(savedLeaves), ...newLeaves};
+        localStorage.setItem('studentLeaves', JSON.stringify(allLeaves));
+        
+        // Regenerate calendar to show updates
+        generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        
+        // Clear form
+        document.getElementById('leave-type').value = '';
+        document.getElementById('from-date').value = '';
+        document.getElementById('to-date').value = '';
+        document.getElementById('leave-reason').value = '';
+        
+        // Show success animation
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.textContent = '✓ Request Submitted!';
+        submitBtn.style.backgroundColor = 'var(--attendance-color)';
+        
+        setTimeout(() => {
+            submitBtn.textContent = 'Submit Leave Request';
+            submitBtn.style.backgroundColor = 'var(--primary-color)';
+        }, 2000);
+    }
+</script>

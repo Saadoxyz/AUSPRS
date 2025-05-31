@@ -1,0 +1,231 @@
+﻿@page "/"
+@using System
+@using Microsoft.AspNetCore.Components.Web
+@inject IJSRuntime JSRuntime
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<div class="main-container">
+    <!-- Navigation -->
+    <nav class="sticky-nav" id="navbar">
+        <div class="logo-container">
+            <img src="/logos.jpg" alt="Air University Logo" class="logo" />
+            <div class="logo-text">
+                <h1>AUSPRS</h1>
+                <h2>Air University Student Portal Registration System</h2>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#programs" class="nav-link">Programs</a>
+            <a href="#administration" class="nav-link">Administration</a>
+            <a href="#contact" class="nav-link">Contact</a>
+            <NavLink href="/faq" class="nav-link" Match="NavLinkMatch.Prefix">FAQs</NavLink>
+            <NavLink href="/login" class="apply-btn">Apply Now</NavLink>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="home-section">
+        <div class="home-content">
+            <div class="home-text">
+                <h1 class="animate-title">Shape Your Future Here</h1>
+                <p class="animate-subtitle">Air University: Setting the Standard, Exceeding Expectations.</p>
+                <NavLink href="/login" class="apply-now-btn animate-button">Apply Now</NavLink>
+            </div><section id="home" class="home-section">
+            </section>
+
+            <div class="home-image">
+                <img src="/Home.jpg" alt="Students working together" class="animate-image" />
+            </div>
+        </div>
+        
+
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <h2 class="section-title">ABOUT US</h2>
+        <div class="about-content">
+            <div class="about-left">
+                <p>At AUSPRS, we are committed to empowering students through accessible, intuitive, and powerful learning tools.</p>
+                <p>Here's what makes us stand out:</p>
+                <ul>
+                    <li>Personalized study plans tailored to your academic goals</li>
+                    <li>Fast, lightweight interface designed for efficiency</li>
+                    <li>Secure access to course materials and university updates</li>
+                    <li>Smart notifications to help you stay on track</li>
+                    <li>A supportive community of learners and mentors</li>
+                </ul>
+            </div>
+            <div class="about-right">
+                <p>Our mission is to redefine the university experience by integrating technology, community, and design. We aim to bring clarity, motivation, and convenience to every student's academic journey.</p>
+                <button class="learn-more-btn">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section id="programs" class="programs-section">
+        <h2 class="section-title">PROGRAMS OFFERED</h2>
+        <p class="programs-intro">Explore a diverse range of undergraduate and postgraduate programs designed to equip you with the skills and knowledge for a successful future.</p>
+
+        <div class="programs-cards">
+            <div class="program-card">
+                <div class="program-icon">
+                    <i class="fas fa-book"></i> <!-- Book icon for Undergraduate -->
+                </div>
+
+                <h3>Undergraduate Programs</h3>
+                <p>Explore a range of bachelor's degrees designed for future leaders.</p>
+                <NavLink class="btn btn-primary" href="/Un">Explore Undergraduate</NavLink>
+            </div>
+
+            <div class="program-card">
+                <div class="program-icon">
+                    <i class="fas fa-graduation-cap"></i> <!-- Graduation cap for Postgraduate -->
+                </div>
+                <h3>Post-Graduate Programs</h3>
+                <p>Advance your career with our specialized master's programs.</p>
+                <NavLink class="btn btn-primary" href="/Ps">Explore Postgraduate</NavLink>
+            </div>
+        </div>
+    </section>
+
+    <!-- Administration Section -->
+    <section id="administration" class="admin-section">
+        <h2 class="section-title">ADMINISTRATION</h2>
+        <p class="admin-intro">Our administration team comprises experienced, passionate professionals ensuring smooth operations, academic excellence, and a supportive environment for every student's growth.</p>
+
+        <div class="admin-cards">
+            <div class="admin-card">
+                <img src="https://cdn.i-scmp.com/sites/default/files/styles/768x768/public/d8/images/methode/2019/05/03/40b7c63c-59a2-11e9-bbcc-84176f6dd1e7_image_hires_134058.jpg?itok=6kpUNFj4&v=1556862065" alt="Muhammad Saad Khan" class="admin-photo" />
+                <h3>Muhammad Saad Khan</h3>
+                <p class="admin-title">Head Master</p>
+                <p class="admin-bio">Our school stands as a beacon of excellence, shaping bright minds with innovation, discipline, and a commitment to future leadership.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <img src="https://w0.peakpx.com/wallpaper/938/553/HD-wallpaper-hayat-actress-turkish.jpg" alt="Ayesha Mudassar" class="admin-photo" />
+                <h3>Ayesha Mudassar</h3>
+                <p class="admin-title">Assistant Head Of Administration</p>
+                <p class="admin-bio">Our school stands as a beacon of excellence, shaping bright minds with innovation, discipline, and a commitment to future leadership.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmy5qacMh5IXOBLGPH2eYASWO8yvn-6XbWRw&s" alt="Maaz Zulfiqar" class="admin-photo" />
+                <h3>Maaz Zulfiqar</h3>
+                <p class="admin-title">Assistant Head Of Academics</p>
+                <p class="admin-bio">Our school stands as a beacon of excellence, shaping bright minds with innovation, discipline, and a commitment to future leadership.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <img src="https://media.cnn.com/api/v1/images/stellar/prod/230302192026-jenna-ortega-sag-awards-file-restricted.jpg?c=original" alt="Tania Khawar" class="admin-photo" />
+                <h3>Tania Khawar</h3>
+                <p class="admin-title">Senior House Mistress</p>
+                <p class="admin-bio">Our school stands as a beacon of excellence, shaping bright minds with innovation, discipline, and a commitment to future leadership.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section id="newsletter" class="newsletter-section">
+        <h2 class="section-title">Join Our Newsletter</h2>
+        <p class="newsletter-intro">Stay informed and inspired — join our newsletter for the latest updates, events, and opportunities delivered to your inbox!</p>
+
+        <div class="newsletter-form">
+            <input type="email" placeholder="Enter your email address" class="email-input" />
+            <button class="subscribe-btn">Subscribe</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Air University Student Portal Registration System</h2>
+                <p>Our mission is to redefine the university experience by integrating technology, community, and design. We aim to bring clarity, motivation, and convenience to every student's academic journey.</p>
+                <p>Phone no: 0347-9926709</p>
+                <p>Email: info@students.au.edu.pk</p>
+            </div>
+
+            <div class="footer-links">
+                <h3>Useful Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#login">Login Page</a></li>
+                    <li><a href="#profile">Profile</a></li>
+                    <li><a href="#registration">Course registration</a></li>
+                    <li><a href="#exchange">Student Exchange and International programs</a></li>
+                    <li><a href="#assignments">Assignment Upload and deadline</a></li>
+                    <li><a href="#admin">Admin</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-more">
+                <h3>Find More</h3>
+                <ul>
+                    <li><a href="#clubs">Clubs and societies</a></li>
+                    <li><a href="#leave">Leave and attendance issue</a></li>
+                    <li><a href="#announcements">Announcements</a></li>
+                    <li><a href="#events">Events</a></li>
+                    <li><a href="#complaints">Complaints</a></li>
+                    <li><a href="#inbox">Inbox</a></li>
+                    <li><a href="#skills">Life Skills Tracker</a></li>
+                    <li><a href="#internship">Internship and Job portal</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-social">
+                <h3>Our Social Networks</h3>
+                <p>Contact us On and follow for updates</p>
+                <div class="footer-social-icons">
+                    <a href="#" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="footer-social-icon"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializePage");
+        }
+    }
+}

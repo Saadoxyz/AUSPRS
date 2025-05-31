@@ -1,0 +1,177 @@
+﻿@page "/signup"
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject FirebaseAuthService FirebaseAuthService
+
+<head>
+    <link href="css/Login.css" rel="stylesheet" />
+</head>
+<div class="container">
+    <div class="left-panel">
+        <div class="logo">
+            <img src="/logo.png" alt="Logo" />
+        </div>
+        <h1 class="title">SIGN UP</h1>
+        <p class="subtitle">Sign up using social networks</p>
+        <div class="social-login">
+            <button class="social-btn linkedin"><i class="fab fa-linkedin"></i></button>
+            <button class="social-btn facebook"><i class="fab fa-facebook"></i></button>
+        </div>
+        <div class="or-divider">OR</div>
+        <EditForm Model="@signupModel" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <InputText @bind-Value="signupModel.FirstName" class="form-control" placeholder="First Name" />
+                    <ValidationMessage For="@(() => signupModel.FirstName)" />
+                </div>
+
+                <div class="form-group half-width">
+                    <InputText @bind-Value="signupModel.LastName" class="form-control" placeholder="Last Name" />
+                    <ValidationMessage For="@(() => signupModel.LastName)" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <InputText @bind-Value="signupModel.CNIC" class="form-control" placeholder="CNIC" />
+                    <ValidationMessage For="@(() => signupModel.CNIC)" />
+                </div>
+
+                <div class="form-group half-width">
+                    <InputDate @bind-Value="signupModel.DateOfBirth" class="form-control" placeholder="Date Of Birth" />
+                    <ValidationMessage For="@(() => signupModel.DateOfBirth)" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <InputText @bind-Value="signupModel.Languages" class="form-control" placeholder="Languages" />
+                <ValidationMessage For="@(() => signupModel.Languages)" />
+            </div>
+
+            <div class="form-group">
+                <InputText @bind-Value="signupModel.Email" class="form-control" placeholder="Email" />
+                <ValidationMessage For="@(() => signupModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <InputText @bind-Value="signupModel.Password" type="password" class="form-control" placeholder="Password" />
+                <ValidationMessage For="@(() => signupModel.Password)" />
+            </div>
+
+            <div class="form-group">
+                <InputText @bind-Value="signupModel.ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+                <ValidationMessage For="@(() => signupModel.ConfirmPassword)" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <button type="submit" class="btn-signup-s">Sign Up</button>
+            </div>
+        </EditForm>
+    </div>
+
+    <div class="right-panel">
+        <div class="already-account">
+            <h2 class="animated-title">Already have an account?</h2>
+            <p>Login to join our academic community and unlock a world of learning, growth, and student services.</p>
+            <button class="btn-login" @onclick="NavigateToLogin">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </div>
+    </div>
+</div>
+<script src="/Login.js"></script>
+@code {
+    private SignupModel signupModel = new SignupModel();
+    private string errorMessage = string.Empty;
+
+    private class SignupModel
+    {
+        [Required(ErrorMessage = "First name is required")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Last name is required")]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "CNIC is required")]
+        public string CNIC { get; set; }
+
+        [Required(ErrorMessage = "Date of birth is required")]
+        public DateTime? DateOfBirth { get; set; }
+
+        public string Languages { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        [StringLength(100, MinimumLength = 4, ErrorMessage = "Password must be at least {2} characters long")]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Confirm password is required")]
+        [Compare("Password", ErrorMessage = "Passwords do not match")]
+        public string ConfirmPassword { get; set; }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = string.Empty;
+
+        // Step 1: Register user in Firebase
+        var (success, localId, idToken, error) = await FirebaseAuthService.RegisterUserAsync(signupModel.Email, signupModel.Password);
+
+        if (!success)
+        {
+            errorMessage = $"Registration failed: {error}";
+            return;
+        }
+
+        // Step 2: Prepare Firestore user data
+        var userData = new
+        {
+            fields = new
+            {
+                FirstName = new { stringValue = signupModel.FirstName },
+                LastName = new { stringValue = signupModel.LastName },
+                CNIC = new { stringValue = signupModel.CNIC },
+                DateOfBirth = new { stringValue = signupModel.DateOfBirth?.ToString("yyyy-MM-dd") },
+                Languages = new { stringValue = signupModel.Languages ?? "" },
+                Email = new { stringValue = signupModel.Email }
+            }
+        };
+
+        // Step 3: Save to Firestore
+        var saveSuccess = await FirebaseAuthService.SaveUserDataAsync(idToken, localId, userData);
+
+        if (!saveSuccess)
+        {
+            errorMessage = "User registered but failed to save data in Firestore.";
+            return;
+        }
+
+        await JSRuntime.InvokeVoidAsync("showToast", "Registration successful!");
+        NavigationManager.NavigateTo("/login");
+    }
+
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeAnimations");
+        }
+    }
+}

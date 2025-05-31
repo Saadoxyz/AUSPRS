@@ -1,0 +1,91 @@
+﻿
+html, body {
+    background-color: #021526; /* Dark navy blue */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main delete container */
+.delete-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: linear-gradient(to bottom right, #102b45, #183b65);
+    /* Dark blue gradient */
+    border: 1px solid #0a2b45;
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.5s ease both;
+    color: #e0e0e0; /* Light text */
+}
+
+/* Headers */
+h1, h2 {
+    color: #90caf9; /* Light blue accent */
+}
+
+/* Warning message */
+.delete-warning {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ff6b6b; /* Light red for contrast */
+    margin-bottom: 1.5rem;
+}
+
+/* Labels */
+.row dt {
+    font-weight: bold;
+    color: #90caf9;
+}
+
+/* Values */
+.row dd {
+    color: #cfd8dc;
+    margin-bottom: 0.8rem;
+}
+
+/* Buttons */
+.btn-danger {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+    .btn-danger:hover {
+        background-color: #a71d2a;
+        border-color: #911924;
+    }
+
+/* Link styles */
+a {
+    color: #90caf9;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    a:hover {
+        text-decoration: underline;
+        color: #ffffff;
+    }
+
+/* Form button spacing */
+.form-buttons {
+    margin-top: 2rem;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

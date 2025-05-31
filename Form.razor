@@ -1,0 +1,151 @@
+﻿@page "/ApplicationForm/{programName}"
+@using Microsoft.AspNetCore.Components
+@inject FirebaseService FirebaseService
+<style>
+    .application-form {
+        margin-top: 2rem;
+        background-color: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        color: black;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        font-family: sans-serif;
+    }
+
+        .application-form h2 {
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+        }
+
+        .application-form label {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .application-form input,
+        .application-form textarea {
+            padding: 0.5rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #ccc;
+            font-size: 0.9rem;
+        }
+
+    .apply-btn {
+        background-color: #2563eb;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+    }
+
+        .apply-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+    .back-btn {
+        margin-top: 1rem;
+        background-color: #6b7280;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+    }
+
+        .back-btn:hover {
+            background-color: #4b5563;
+        }
+
+    .dialog-box {
+        margin-top: 1rem;
+        background-color: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+        padding: 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+
+    .error-box {
+        margin-top: 1rem;
+        background-color: #fee2e2;
+        border: 1px solid #f87171;
+        color: #991b1b;
+        padding: 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+</style>
+
+<div class="application-form">
+    <h2>Application Form for @programName</h2>
+
+    <label>Full Name:</label>
+    <input type="text" placeholder="Enter your full name" @bind="fullName" />
+
+    <label>Email:</label>
+    <input type="email" placeholder="Enter your email" @bind="email" />
+
+    <label>Phone Number:</label>
+    <input type="tel" placeholder="Enter your phone number" @bind="phoneNumber" />
+
+    <label>Why do you want to apply for this program?</label>
+    <textarea rows="4" placeholder="Your answer..." @bind="reason"></textarea>
+
+    <button class="apply-btn" @onclick="SubmitForm">Submit Application</button>
+
+    <a href="/Program"><button class="back-btn">Back to Programs</button></a>
+
+    @if (showSuccess)
+    {
+        <div class="dialog-box">Application submitted successfully!</div>
+    }
+    else if (showError)
+    {
+        <div class="error-box">Please fill in all fields before submitting.</div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string programName { get; set; }
+
+    private string fullName;
+    private string email;
+    private string phoneNumber;
+    private string reason;
+
+    private bool showSuccess = false;
+    private bool showError = false;
+
+    private async Task SubmitForm()
+    {
+        if (!string.IsNullOrWhiteSpace(fullName) &&
+            !string.IsNullOrWhiteSpace(email) &&
+            !string.IsNullOrWhiteSpace(phoneNumber) &&
+            !string.IsNullOrWhiteSpace(reason))
+        {
+            showSuccess = true;
+            showError = false;
+
+            await FirebaseService.SaveApplicationAsync(programName, fullName, email, phoneNumber, reason);
+
+            // Optional: clear fields
+            fullName = email = phoneNumber = reason = string.Empty;
+        }
+        else
+        {
+            showError = true;
+            showSuccess = false;
+        }
+    }
+}

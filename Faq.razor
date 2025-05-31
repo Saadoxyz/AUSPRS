@@ -1,0 +1,166 @@
+﻿@page "/faq"
+@inject NavigationManager NavigationManager
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .top-header {
+        background-color: #0a2238;
+        color: white;
+        padding: 14px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .top-header .logo {
+            font-weight: bold;
+            font-size: 17px;
+        }
+
+        .top-header .nav {
+            display: flex;
+            gap: 25px;
+            font-size: 14px;
+        }
+
+            .top-header .nav a {
+                color: white;
+                text-decoration: none;
+            }
+
+                .top-header .nav a:hover {
+                    text-decoration: underline;
+                }
+
+        .top-header .apply-btn {
+            padding: 4px 10px;
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+    .container {
+        max-width: 850px;
+        margin: 20px auto;
+        padding: 0;
+    }
+
+    .faq-header {
+        background-color: #0e5aa7;
+        color: white;
+        font-weight: bold;
+        padding: 8px 20px;
+        font-size: 15px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+    .faq-item {
+        background-color: white;
+        border-radius: 8px;
+        margin: 10px 0;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .faq-question {
+        padding: 16px;
+        font-size: 15px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+        .faq-question:hover {
+            background-color: #f0f0f0;
+        }
+
+    .faq-answer {
+        padding: 0 16px 16px 16px;
+        font-size: 14px;
+        color: #444;
+        display: none;
+        border-top: 1px solid #eee;
+    }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+    .icon {
+        font-size: 20px;
+        font-weight: bold;
+        color: #555;
+    }
+</style>
+
+<!-- Top Header Bar -->
+<div class="top-header">
+    <div class="logo">Air University Student Portal<br />Registration System</div>
+    <div class="nav">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Programs</a>
+        <a href="#">Administration</a>
+        <a href="#">Contact</a>
+        <a href="#">FAQs</a>
+        <button class="apply-btn">Apply Now</button>
+    </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="container">
+    <div class="faq-header">Frequently Asked Questions (Admissions)</div>
+
+    @foreach (var faq in faqs)
+    {
+        <div class="faq-item">
+            <div class="faq-question" @onclick="() => Toggle(faq)">
+                @faq.Question
+                <span class="icon">@((faq.IsOpen) ? "-" : "+")</span>
+            </div>
+            <div class="faq-answer @(faq.IsOpen ? "show" : "")">
+                @faq.Answer
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    class FAQ
+    {
+        public string Question { get; set; }
+        public string Answer { get; set; }
+        public bool IsOpen { get; set; }
+    }
+
+    List<FAQ> faqs = new()
+    {
+        new FAQ { Question = "Is there any age limit for Admission at AU?", Answer = "There is no specific age limit for most programs at Air University." },
+        new FAQ { Question = "I am a foreigner and want to get admission at AU?", Answer = "Foreign applicants can apply through the AU international admissions section." },
+        new FAQ { Question = "Do I fall under the International Students category?", Answer = "If you are temporarily or permanently residing in a country other than Pakistan, and hold either a Pakistani passport, or dual nationality (one of them being Pakistani), you do not fall under the International Student category." },
+        new FAQ { Question = "What is the processing fee for online registration for Admission?", Answer = "The processing fee details are available on the official admission portal." },
+        new FAQ { Question = "Can I pay admission application charges through internet banking/ ATM?", Answer = "Yes, you can pay via internet banking or ATM." },
+        new FAQ { Question = "Would the admission application processing fee be refundable in case a student does not appear in test or join the University?", Answer = "No, the fee is non-refundable." },
+        new FAQ { Question = "Do I have to print and submit the admission form manually?", Answer = "No, the submission is entirely online." },
+        new FAQ { Question = "Whom should I contact for queries about AU Entry Test for Undergraduate Programmes?", Answer = "You can contact the AU admissions office through the contact page on the portal." },
+    };
+
+    void Toggle(FAQ faq)
+    {
+        foreach (var item in faqs)
+        {
+            if (item != faq)
+                item.IsOpen = false;
+        }
+
+        faq.IsOpen = !faq.IsOpen;
+    }
+}
