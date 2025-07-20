@@ -17,8 +17,7 @@ The AUSPRS app is a modern solution for managing academic activities, student da
 5. [Figma Design](#figma-design)
 6. [Database Schema](#database-schema)
 7. [Setup Instructions](#setup-instructions)
-8. [Team Contributions](#team-contributions)
-9. [Conclusion](#conclusion)
+8. [Conclusion](#conclusion)
 
 ---
 
@@ -109,6 +108,7 @@ The AUSPRS app is a modern solution for managing academic activities, student da
 * ASP.NET Core with SignalR
 * ChatGPT API
 * Google Cloud Analytics
+* Microsoft entity Framework Core
 
 ---
 
@@ -139,7 +139,7 @@ The AUSPRS app is a modern solution for managing academic activities, student da
 * GPA Tracker
 * Forms Page & Google Classroom Integration
 
-> Refer to the `/screenshots` directory in the repo or see detailed visual design in the Figma section.
+> Refer to the `/VP_PROJECT` directory in the repo or see detailed visual design in the Figma section.
 
 ---
 
@@ -147,7 +147,7 @@ The AUSPRS app is a modern solution for managing academic activities, student da
 
 The application interface was first designed in Figma to ensure a clean, responsive, and modern UI.
 
-View Screenshots: `/figma/` (See report PDF for visual breakdown)
+View Screenshots: `/VP_PROJECT/` (See report PDF for visual breakdown)
 
 ---
 
@@ -161,7 +161,7 @@ View Screenshots: `/figma/` (See report PDF for visual breakdown)
 * **Leave Requests**: Reason, Date, Status, Supporting File
 * **Messages/Chats**: Sender, Receiver, Timestamp, Message
 
-> For full ERD and table breakdown, refer to the `Database_Schema.md` or the VP\_REPORT.pdf under `docs/`
+> For full ERD and table breakdown, refer to the VP_REPORT.pdf.
 
 ---
 
@@ -169,8 +169,7 @@ View Screenshots: `/figma/` (See report PDF for visual breakdown)
 
 ### Prerequisites
 
-* Flutter SDK
-* Android Studio or VS Code
+* VS Code
 * Firebase Project setup (Auth + Firestore)
 * SQL Server instance (can be local)
 * .NET Core installed
@@ -180,13 +179,14 @@ View Screenshots: `/figma/` (See report PDF for visual breakdown)
 ### Installation
 
 ```bash
-flutter pub get
+Add-migration
+Update-Database
 ```
 
 ### Running the App
 
 ```bash
-flutter run
+Run dev
 ```
 
 ### Firebase Setup
